@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
 interface ProductCardProps {
@@ -22,7 +23,7 @@ export function ProductCard({ id, name, price, category, description, images }: 
   const safeImages = images?.length > 0 ? images : [];
   const visibleImages = safeImages.slice(0, 3); // Max 3 images
 
-  const handleDragEnd = (event: any, info: any) => {
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (visibleImages.length <= 1) return;
     if (info.offset.x < -50) {
       // Swipe Left -> Next
@@ -40,11 +41,9 @@ export function ProductCard({ id, name, price, category, description, images }: 
         <Link href={`/products/${id}`} className="absolute inset-0 block cursor-pointer">
           {safeImages.length > 0 ? (
             <AnimatePresence initial={false} mode="popLayout">
-              <motion.img
+              <motion.div
                 key={currentImageIndex}
-                src={visibleImages[currentImageIndex]}
-                alt={`${name} - View ${currentImageIndex + 1}`}
-                className="absolute inset-0 h-full w-full object-cover"
+                className="absolute inset-0 h-full w-full"
                 draggable="true"
                 drag={visibleImages.length > 1 ? "x" : false}
                 dragConstraints={{ left: 0, right: 0 }}
@@ -54,7 +53,16 @@ export function ProductCard({ id, name, price, category, description, images }: 
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-              />
+              >
+                <Image
+                  src={visibleImages[currentImageIndex]}
+                  alt={`${name} - View ${currentImageIndex + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority={currentImageIndex === 0}
+                />
+              </motion.div>
             </AnimatePresence>
           ) : (
             <div className="flex h-full w-full items-center justify-center text-muted-foreground/30 font-medium">
