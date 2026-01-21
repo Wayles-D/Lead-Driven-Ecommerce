@@ -38,7 +38,7 @@ export function LoginForm() {
         router.push(callbackUrl);
         router.refresh();
       }
-    } catch (error) {
+    } catch {
        setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
@@ -141,7 +141,7 @@ export function LoginForm() {
       </form>
 
       <div className="text-center text-sm pt-2">
-        <span className="text-muted-foreground">Don't have an account? </span>
+        <span className="text-muted-foreground">Don&apos;t have an account? </span>
         <Link href="/signup" className="text-primary hover:text-primary/80 font-medium transition-colors">
           Sign up
         </Link>

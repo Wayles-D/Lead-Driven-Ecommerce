@@ -17,7 +17,7 @@ export default async function AdminDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="space-y-1">
           <h1 className="text-4xl font-bold tracking-tight">Products</h1>
-          <p className="text-muted-foreground">Manage your store's handcrafted collection.</p>
+          <p className="text-muted-foreground">Manage your store&apos;s handcrafted collection.</p>
         </div>
         <Button asChild className="rounded-2xl h-12 px-6 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] gap-2">
           <Link href="/admin/products/new">

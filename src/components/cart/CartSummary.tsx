@@ -22,7 +22,7 @@ export function CartSummary() {
         </div>
         <h2 className="text-2xl font-bold mb-3">Your cart is empty</h2>
         <p className="text-muted-foreground mb-8 text-balance">
-          Looks like you haven't added anything to your cart yet. Discover our latest handcrafted collections.
+          Looks like you haven&apos;t added anything to your cart yet. Discover our latest handcrafted collections.
         </p>
         <Button asChild size="lg" className="rounded-full px-8 gap-2 group">
           <Link href="/products">

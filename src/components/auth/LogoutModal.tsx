@@ -3,7 +3,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogOut, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 
 interface LogoutModalProps {

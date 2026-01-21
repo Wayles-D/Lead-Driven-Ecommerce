@@ -26,7 +26,7 @@ export async function registerUser(formData: FormData) {
   const validated = registerSchema.safeParse(rawData);
 
   if (!validated.success) {
-    return { error: validated.error.errors[0].message };
+    return { error: validated.error.issues[0]?.message || "Validation failed" };
   }
 
   const { email, password, firstName, lastName, phoneNumber } = validated.data;

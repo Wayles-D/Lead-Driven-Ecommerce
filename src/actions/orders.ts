@@ -99,7 +99,7 @@ export async function createOrder(formData: FormData, cartItemsJson: string) {
   return { success: true, orderId: order.id };
 }
 
-export async function updateFulfillmentStatus(orderId: string, status: any) {
+export async function updateFulfillmentStatus(orderId: string, status: string) {
   await requireAdmin();
 
   const fulfillmentStatusSchema = z.enum(["PROCESSING", "SHIPPING", "SHIPPED", "DELIVERED"]);

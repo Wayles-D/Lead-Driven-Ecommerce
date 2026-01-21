@@ -8,10 +8,7 @@ import {
     MapPin, 
     User, 
     CreditCard, 
-    Calendar,
     ArrowLeft,
-    ChevronDown,
-    Truck,
     CheckCircle2,
     Clock
 } from "lucide-react";

@@ -68,9 +68,10 @@ export function CheckoutForm() {
                      router.push(`/orders/${result.orderId}/success`);
                 }
             }
-        } catch (e: any) {
+        } catch (e) {
             console.error(e);
-            setError(e.message || "Failed to place order. Please try again.");
+            const errorMessage = e instanceof Error ? e.message : "Failed to place order. Please try again.";
+            setError(errorMessage);
             setIsLoading(false);
         }
     };
