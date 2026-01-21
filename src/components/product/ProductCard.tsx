@@ -35,7 +35,7 @@ export function ProductCard({ id, name, price, category, description, images }: 
   };
 
   return (
-    <div className="group flex flex-col w-full bg-card rounded-[2rem] p-4 transition-all hover:shadow-xl hover:shadow-black/5">
+    <div className="group flex flex-col w-full bg-white dark:bg-card rounded-[2.5rem] p-4 shadow-xl transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] hover:-translate-y-2">
       {/* Image Section */}
       <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[1.5rem] bg-secondary">
         <Link href={`/products/${id}`} className="absolute inset-0 block cursor-pointer">
@@ -58,7 +58,7 @@ export function ProductCard({ id, name, price, category, description, images }: 
                   src={visibleImages[currentImageIndex]}
                   alt={`${name} - View ${currentImageIndex + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   priority={currentImageIndex === 0}
                 />
@@ -101,28 +101,28 @@ export function ProductCard({ id, name, price, category, description, images }: 
       </div>
 
       {/* Text Section */}
-      <div className="flex flex-col gap-2 pt-4 px-1">
+      <div className="flex flex-col gap-3 pt-5 px-2">
         <div className="space-y-1">
            {/* Name */}
-          <h3 className="font-bold text-xl leading-tight text-foreground line-clamp-1">
+          <h3 className="font-bold text-xl tracking-tight text-foreground line-clamp-1">
             {name}
           </h3>
           {/* Category */}
-          <p className="text-sm font-medium text-muted-foreground capitalize">
+          <p className="text-xs font-semibold text-muted-foreground/50 uppercase tracking-widest">
             {category}
           </p>
         </div>
 
         {/* Description */}
-        <p className="text-sm text-muted-foreground/80 line-clamp-2 min-h-[40px] leading-relaxed">
+        <p className="text-[15px] text-muted-foreground/70 line-clamp-2 min-h-[44px] leading-relaxed">
           {description}
         </p>
 
         {/* Bottom Row: Price & CTA */}
         <div className="flex items-center justify-between gap-3 pt-3 mt-auto">
           {/* Price Pill */}
-          <div className="flex items-center justify-center rounded-full bg-secondary px-5 py-2.5 min-w-[80px]">
-            <span className="text-lg font-bold text-foreground">
+          <div className="flex items-center justify-center rounded-full bg-secondary/80 px-5 py-2.5 min-w-[90px]">
+            <span className="text-lg font-bold text-foreground tracking-tight">
               {formatCurrency(price)}
             </span>
           </div>
