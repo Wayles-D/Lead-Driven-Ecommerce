@@ -75,7 +75,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               price={product.price}
               category={product.category}
               description={product.description}
-              image={product.images[0]}
+              images={product.images}
             />
           ))}
         </div>
