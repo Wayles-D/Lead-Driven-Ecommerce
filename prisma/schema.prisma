@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  UNPAID
+  PAID
+  CANCELLED
+}
+
+enum FulfillmentStatus {
+  PROCESSING
+  SHIPPING
+  SHIPPED
+  DELIVERED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  firstName    String
+  lastName     String
+  email        String   @unique
+  phoneNumber  String   @unique
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  resetPasswordToken   String?   @unique
+  resetPasswordExpires DateTime?
+
+  orders       Order[]
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  name           String
+  description    String
+  price          Int
+  category        String
+  images          String[]
+  availableSizes  Int[]
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  orderItems      OrderItem[]
+}
+
+model Order {
+  id               String            @id @default(cuid())
+  userId           String
+  status           OrderStatus       @default(UNPAID)
+  fulfillmentStatus FulfillmentStatus @default(PROCESSING)
+  totalAmount      Int
+  shippingAddress  String
+  city             String
+  state            String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  user             User              @relation(fields: [userId], references: [id])
+  items            OrderItem[]
+  payment          Payment?
+}
+
+model OrderItem {
+  id              String   @id @default(cuid())
+  orderId         String
+  productId       String
+  productName     String
+  priceAtPurchase Int
+  quantity        Int
+  selectedSize    Int
+
+  order            Order   @relation(fields: [orderId], references: [id])
+  product          Product @relation(fields: [productId], references: [id])
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  orderId   String        @unique
+  provider  String
+  reference String
+  status    PaymentStatus
+  amount    Int
+  paidAt    DateTime?
+  createdAt DateTime      @default(now())
+
+  order     Order         @relation(fields: [orderId], references: [id])
+}

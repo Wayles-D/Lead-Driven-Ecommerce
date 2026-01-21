@@ -3,25 +3,91 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base - Warm, clean, premium */
+  --background: 255 255 255; /* #FFFFFF */
+  --foreground: 23 23 23; /* #171717 */
+
+  /* Primary - Deep, confident charcoal */
+  --primary: 23 23 23; /* #171717 */
+  --primary-foreground: 255 255 255;
+
+  /* Secondary - Soft gray for balance */
+  --secondary: 245 245 245; /* #F5F5F5 */
+  --secondary-foreground: 23 23 23;
+
+  /* Accent - Subtle interactive elements */
+  --accent: 245 245 245; /* #F5F5F5 */
+  --accent-foreground: 23 23 23;
+
+  /* Muted - For supporting text */
+  --muted: 115 115 115; /* #737373 */
+  --muted-foreground: 82 82 82;
+
+  /* Borders - Minimal separation */
+  --border: 229 229 229; /* #E5E5E5 */
+
+  /* WhatsApp - The only "loud" color, specific for action */
+  --whatsapp: 37 211 102; /* #25D366 */
+  --whatsapp-foreground: 255 255 255;
+
+    /* Cards & Popovers - Solid & Opaque */
+    --card: 255 255 255; /* #FFFFFF */
+    --card-foreground: 23 23 23; /* #171717 */
+    --popover: 255 255 255;
+    --popover-foreground: 23 23 23;
+
+    /* Radius */
+    --radius: 1.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html,
+  body {
+    @apply bg-background text-foreground antialiased overflow-x-hidden w-full;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    text-rendering: optimizeLegibility;
   }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Strict Dropdown Styles */
+  .dropdown-menu-strict {
+    background-color: rgb(0, 0, 0) !important;
+    color: rgb(255, 255, 255) !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    overflow: hidden !important;
+    padding: 0.5rem !important;
+  }
+
+  .dropdown-item-strict {
+    @apply flex items-center gap-3 px-4 py-3 text-sm font-bold transition-all duration-200 cursor-pointer;
+    background-color: transparent !important;
+    color: rgb(255, 255, 255) !important;
+    border-radius: 0.75rem !important;
+  }
+
+  .dropdown-item-strict:hover {
+    background-color: rgb(255, 255, 255) !important;
+    color: rgb(0, 0, 0) !important;
+  }
+
+  .dropdown-item-strict:hover * {
+    color: rgb(0, 0, 0) !important;
   }
 }
