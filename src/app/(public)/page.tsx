@@ -2,8 +2,10 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ShieldCheck, MessageSquare, Star } from "lucide-react";
+import { ApiService } from "@/lib/api";
 
 export default function Home() {
   return (
@@ -53,9 +55,9 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { name: "Timeless Comfort", img: "https://plus.unsplash.com/premium_photo-1729104895426-24d9a3cecc97?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Njd8fHRpbWVsZXNzJTIwY29tZm9ydCUyMGxlYXRoZXIlMjBzaG9lfGVufDB8fDB8fHww", category: "sandals", color: "bg-stone-100" },
-            { name: "Modern Steps", img: "https://plus.unsplash.com/premium_photo-1673367751771-f13597abadf3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDR8fHxlbnwwfHx8fHw%3D",category: "slides", color: "bg-neutral-100" },
-            { name: "Premium Essentials", img: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1764972050/9176554c-fe50-4561-8e55-842be195866e.png", category: "slippers", color: "bg-orange-50/50" },
+            { name: "Timeless Comfort",  img: ApiService.assets.placeholders.sandals, category: "sandals", color: "bg-stone-100" },
+            { name: "Modern Steps", img: ApiService.assets.placeholders.slides, category: "slides", color: "bg-neutral-100" },
+            { name: "Premium Essentials", img: ApiService.assets.placeholders.slippers, category: "slippers", color: "bg-orange-50/50" },
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -69,8 +71,8 @@ export default function Home() {
                 <div className={`aspect-[4/5] ${item.color} rounded-lg mb-4 overflow-hidden relative`}>
                     <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-500" />
                     {/* Placeholder for real image */}
-                    <div className="flex items-center justify-center h-full text-muted-foreground/30 font-medium text-lg">
-                        <img src={item.img} alt={item.name} />
+                    <div className="flex items-center justify-center h-full text-muted-foreground/30 font-medium text-lg relative">
+                        <Image src={item.img} alt={item.name} fill className="object-cover" />
                     </div>
                 </div>
                 <h3 className="font-semibold text-lg group-hover:text-primary/80 transition-colors">
@@ -83,22 +85,56 @@ export default function Home() {
       </section>
 
       {/* Trust Signals */}
-      <section className="bg-secondary/30 py-24">
-        <div className="container mx-auto px-4 text-center">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div>
-              <h3 className="font-bold text-lg mb-2">Secure Payments</h3>
-              <p className="text-muted-foreground">Protected by Paystack for 100% secure transactions.</p>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-2">WhatsApp Priority</h3>
-              <p className="text-muted-foreground">Instant order confirmation via direct WhatsApp line.</p>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-2">Premium Quality</h3>
-              <p className="text-muted-foreground">Handpicked materials for lasting comfort and style.</p>
-            </div>
-          </div>
+      <section className="py-24 bg-white dark:bg-transparent">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.15,
+                }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            {[
+              {
+                title: "Secure Payments",
+                description: "Protected by Paystack for 100% secure transactions.",
+                icon: <ShieldCheck className="w-6 h-6 text-primary/70" />
+              },
+              {
+                title: "WhatsApp Priority",
+                description: "Instant order confirmation via direct WhatsApp line.",
+                icon: <MessageSquare className="w-6 h-6 text-primary/70" />
+              },
+              {
+                title: "Premium Quality",
+                description: "Handpicked materials for lasting comfort and style.",
+                icon: <Star className="w-6 h-6 text-primary/70" />
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.23, 1, 0.32, 1] } }
+                }}
+                className="group p-8 rounded-[2rem] bg-card border border-border/50 shadow-xl transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.04)] hover:-translate-y-1"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-secondary shadow-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                  {item.icon}
+                </div>
+                <h3 className="font-bold text-xl mb-3 tracking-tight">{item.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
     </div>

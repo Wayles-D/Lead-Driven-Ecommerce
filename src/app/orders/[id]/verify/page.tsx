@@ -1,4 +1,4 @@
-import { verifyTransaction } from "@/lib/paystack";
+import { ApiService } from "@/lib/api";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
@@ -20,7 +20,7 @@ export default async function VerifyPaymentPage({ params, searchParams }: Verify
   }
 
   try {
-    const verification = await verifyTransaction(reference);
+    const verification = await ApiService.paystack.verifyTransaction(reference);
 
     if (verification.status && verification.data.status === "success") {
         // Double check amount matches

@@ -2,7 +2,7 @@
 
 import { requireAuth } from "@/lib/utils/session";
 import { prisma } from "@/lib/prisma";
-import { initializePayment } from "@/lib/paystack";
+import { ApiService } from "@/lib/api";
 import { redirect } from "next/navigation";
 
 export async function initiateCheckoutPayment(orderId: string) {
@@ -36,7 +36,7 @@ export async function initiateCheckoutPayment(orderId: string) {
   }
 
   try {
-      const paystackResponse = await initializePayment(email, order.totalAmount, order.id);
+      const paystackResponse = await ApiService.paystack.initializePayment(email, order.totalAmount, order.id);
       if (paystackResponse.status) {
           return { url: paystackResponse.data.authorization_url };
       } else {

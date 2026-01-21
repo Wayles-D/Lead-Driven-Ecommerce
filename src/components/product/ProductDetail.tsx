@@ -5,8 +5,10 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import { MessageCircle } from "lucide-react";
-import { WhatsAppService } from "@/lib/whatsapp";
+import { ApiService } from "@/lib/api";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 interface Product {
@@ -25,6 +27,7 @@ export function ProductDetail({ product }: { product: Product }) {
     const [selectedSize, setSelectedSize] = useState<number | null>(null);
     const [quantity, setQuantity] = useState(1);
     const [isAdded, setIsAdded] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const handleAddToCart = () => {
         if (!selectedSize) return;
@@ -33,7 +36,7 @@ export function ProductDetail({ product }: { product: Product }) {
             productId: product.id,
             name: product.name,
             price: product.price,
-            image: product.images[0],
+            image: product.images[currentImageIndex],
             selectedSize: selectedSize,
             quantity: quantity,
         });
@@ -45,16 +48,53 @@ export function ProductDetail({ product }: { product: Product }) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
             {/* Image Gallery */}
-            <div className="space-y-4">
-                <div className="aspect-square bg-secondary rounded-[2.5rem] overflow-hidden relative border border-border/50 shadow-inner">
-                    {product.images[0] ? (
-                        <div className="w-full h-full bg-cover bg-center transition-transform hover:scale-110 duration-1000" style={{ backgroundImage: `url(${product.images[0]})` }} />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-2xl font-medium">
-                            {product.name}
-                        </div>
-                    )}
+            <div className="space-y-6">
+                <div className="aspect-square bg-secondary rounded-[2.5rem] overflow-hidden relative border border-border/50 shadow-inner group">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentImageIndex}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="relative w-full h-full"
+                        >
+                            {product.images[currentImageIndex] ? (
+                                <Image
+                                    src={product.images[currentImageIndex]}
+                                    alt={product.name}
+                                    fill
+                                    className="object-cover transition-transform group-hover:scale-105 duration-1000"
+                                    priority
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-2xl font-medium">
+                                    {product.name}
+                                </div>
+                            )}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
+
+                {product.images.length > 1 && (
+                    <div className="flex gap-4 px-1">
+                        {product.images.map((img, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setCurrentImageIndex(idx)}
+                                className={`relative w-24 aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-300
+                                    ${currentImageIndex === idx ? 'border-primary scale-105' : 'border-transparent hover:border-border'}`}
+                            >
+                                <Image
+                                    src={img}
+                                    alt={`${product.name} view ${idx + 1}`}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Product Info */}
@@ -129,8 +169,8 @@ export function ProductDetail({ product }: { product: Product }) {
                         className="w-full h-14 rounded-2xl border-2 font-black hover:bg-[#25D366] hover:text-white hover:border-[#25D366] transition-all gap-3 group"
                     >
                         <a 
-                            href={WhatsAppService.getLink(
-                                WhatsAppService.getProductInquiryMessage(
+                            href={ApiService.whatsapp.getLink(
+                                ApiService.whatsapp.getProductInquiryMessage(
                                     session?.user?.name || "a customer",
                                     product.name,
                                     product.id

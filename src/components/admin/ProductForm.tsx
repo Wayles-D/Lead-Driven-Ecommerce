@@ -2,7 +2,10 @@
 
 import { createProduct, updateProduct } from "@/actions/products";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import Image from "next/image";
+import { X, Plus, Loader2 } from "lucide-react";
+import { ApiService } from "@/lib/api";
 
 
 // Define strict type based on Prisma model
@@ -20,6 +23,9 @@ interface ProductData {
 export function ProductForm({ product }: { product?: ProductData }) {
     const isEditing = !!product;
     const [isLoading, setIsLoading] = useState(false);
+    const [images, setImages] = useState<string[]>(product?.images || []);
+    const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Initial values
     const defaultValues = {
@@ -30,6 +36,39 @@ export function ProductForm({ product }: { product?: ProductData }) {
         images: product?.images.join(", ") || "",
         availableSizes: product?.availableSizes.join(", ") || "40, 41, 42, 43, 44, 45",
         isActive: product?.isActive ?? true,
+    };
+
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+        
+        const newImages = [...images];
+        if (newImages.length + files.length > 3) {
+            alert("Max 3 images allowed");
+            return;
+        }
+
+        setIsUploading(true);
+        try {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const result = await ApiService.cloudinary.upload(file);
+                if (result.secure_url) {
+                    newImages.push(result.secure_url);
+                }
+            }
+            setImages(newImages);
+        } catch (error) {
+            console.error("Upload failed:", error);
+            alert("Upload failed. Please try again.");
+        } finally {
+            setIsUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+    };
+
+    const removeImage = (index: number) => {
+        setImages(images.filter((_, i) => i !== index));
     };
 
     return (
@@ -97,15 +136,64 @@ export function ProductForm({ product }: { product?: ProductData }) {
                 </div>
             </div>
 
-            <div className="space-y-2">
-                <label className="text-sm font-medium">Images (Comma separated URLs)</label>
+            <div className="space-y-4">
+                <label className="text-sm font-medium">Product Images (Max 3)</label>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    {images.map((url, index) => (
+                        <div key={index} className="relative aspect-square rounded-xl overflow-hidden border bg-secondary/20">
+                            <Image 
+                                src={url} 
+                                alt={`Product ${index + 1}`} 
+                                fill 
+                                className="object-cover"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => removeImage(index)}
+                                className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ))}
+                    
+                    {images.length < 3 && (
+                        <button
+                            type="button"
+                            disabled={isUploading}
+                            onClick={() => fileInputRef.current?.click()}
+                            className="aspect-square rounded-xl border-2 border-dashed border-muted-foreground/20 flex flex-col items-center justify-center gap-2 hover:border-primary/50 hover:bg-primary/5 transition-all group"
+                        >
+                            {isUploading ? (
+                                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                            ) : (
+                                <>
+                                    <div className="p-2 rounded-full bg-secondary group-hover:scale-110 transition-transform">
+                                        <Plus className="w-5 h-5" />
+                                    </div>
+                                    <span className="text-xs font-medium text-muted-foreground">Upload</span>
+                                </>
+                            )}
+                        </button>
+                    )}
+                </div>
+                
                 <input 
-                    name="images" 
-                    defaultValue={defaultValues.images}
-                    placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleUpload}
+                    accept="image/*"
+                    multiple
+                    className="hidden"
                 />
-                <p className="text-xs text-muted-foreground">For Phase 3, paste manual Cloudinary URLs here.</p>
+                
+                {/* Hidden input to pass URLs to the server action */}
+                <input type="hidden" name="images" value={images.join(",")} />
+                
+                <p className="text-xs text-muted-foreground">
+                    Upload up to 3 high-quality product images. Previews will be shown above.
+                </p>
             </div>
 
             <div className="space-y-2">
@@ -130,7 +218,7 @@ export function ProductForm({ product }: { product?: ProductData }) {
             </div>
 
             <div className="flex gap-4 pt-4">
-                 <Button type="submit" disabled={isLoading}>
+                 <Button type="submit" disabled={isUploading || isLoading}>
                     {isLoading ? "Saving..." : (isEditing ? "Update Product" : "Create Product")}
                  </Button>
                  <Button type="button" variant="outline" onClick={() => window.history.back()}>

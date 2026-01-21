@@ -7,7 +7,7 @@ import { initiateCheckoutPayment } from "@/actions/payment";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/utils/session";
 import { notFound, redirect } from "next/navigation";
-import { WhatsAppService } from "@/lib/whatsapp";
+import { ApiService } from "@/lib/api";
 
 interface SuccessPageProps {
   params: { id: string };
@@ -122,7 +122,7 @@ export default async function OrderSuccessPage({ params }: SuccessPageProps) {
             {isPaid ? (
               <Button asChild className="h-14 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white border-none shadow-lg shadow-[#25D366]/20 transition-all font-bold gap-2" size="lg">
                 <a 
-                    href={WhatsAppService.getLink(WhatsAppService.getOrderConfirmationMessage(session.user.name || "Customer", order.id))} 
+                    href={ApiService.whatsapp.getLink(ApiService.whatsapp.getOrderConfirmationMessage(session.user.name || "Customer", order.id))} 
                     target="_blank"
                     rel="noopener noreferrer"
                 >

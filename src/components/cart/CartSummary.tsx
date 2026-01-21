@@ -6,6 +6,8 @@ import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { Trash2, ShoppingBag, Plus, Minus, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ApiService } from "@/lib/api";
+import Image from "next/image";
 
 export function CartSummary() {
   const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCart();
@@ -56,12 +58,13 @@ export function CartSummary() {
                         className="flex flex-col sm:flex-row gap-4 sm:gap-8 py-8 border-b last:border-0 relative group items-start sm:items-center"
                     >
                         {/* Image - Better sized for mobile */}
-                        <div className="w-full sm:w-28 h-48 sm:h-28 bg-secondary/30 rounded-2xl overflow-hidden flex-shrink-0 border border-border/50">
+                        <div className="w-full sm:w-28 h-48 sm:h-28 bg-secondary/30 rounded-2xl overflow-hidden flex-shrink-0 border border-border/50 relative">
                             {item.image && (
-                                <img 
+                                <Image
                                     src={item.image} 
                                     alt={item.name} 
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-500" 
                                 />
                             )}
                         </div>
@@ -152,8 +155,8 @@ export function CartSummary() {
                 </Link>
             </Button>
             
-            <div className="flex items-center justify-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-                <img src="https://checkout.paystack.com/images/paystack-badge.png" alt="Paystack" className="h-6 object-contain" />
+            <div className="flex items-center justify-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all duration-500 relative h-6">
+                <Image src={ApiService.paystack.assets.badgeUrl} alt="Paystack" fill className="object-contain" />
             </div>
         </div>
       </div>

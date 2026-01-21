@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { cn, formatCurrency } from "@/lib/utils";
@@ -55,9 +56,9 @@ export default async function AdminDashboard() {
                   <tr key={product.id} className="hover:bg-secondary/10 transition-colors group">
                     <td className="p-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-secondary overflow-hidden border border-border flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-xl bg-secondary overflow-hidden border border-border flex items-center justify-center relative">
                           {product.images[0] ? (
-                            <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                            <Image src={product.images[0]} alt={product.name} fill className="object-cover" />
                           ) : (
                             <Package size={20} className="text-muted-foreground/30" />
                           )}

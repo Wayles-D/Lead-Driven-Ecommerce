@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyWebhookSignature } from "@/lib/paystack";
 import { prisma } from "@/lib/prisma";
+import { ApiService } from "@/lib/api";
 
 export async function POST(req: NextRequest) {
-  const signature = req.headers.get("x-paystack-signature");
+  const signature = req.headers.get("x-paystack-signature") || "";
   if (!signature) {
     return new NextResponse("Missing signature", { status: 400 });
   }
 
   const payload = await req.json();
 
-  if (!verifyWebhookSignature(signature, payload)) {
+  if (!ApiService.paystack.verifyWebhookSignature(signature, payload)) {
     return new NextResponse("Invalid signature", { status: 401 });
   }
 
