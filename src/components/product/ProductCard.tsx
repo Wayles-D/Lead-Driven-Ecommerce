@@ -71,20 +71,12 @@ export function ProductCard({ id, name, price, category, description, images }: 
           )}
         </Link>
 
-        {/* Badge: Best Seller Only */}
-        <div className="absolute left-4 top-4 overflow-hidden rounded-full border border-white/20 bg-white/30 backdrop-blur-md px-3 py-1.5 z-10">
+        {/* Badge: Best Seller Only
+        {/* <div className="absolute left-4 top-4 overflow-hidden rounded-full border border-white/20 bg-white/30 backdrop-blur-md px-3 py-1.5 z-10">
           <span className="text-xs font-semibold text-white tracking-wide shadow-sm">Best Seller</span>
-        </div>
+        </div> */}
 
-        {/* Logo/Brand Icon Placeholder - Top Right in reference, keeping clean or generic if not provided 
-            Reference has a Nike logo. We'll skip specific brand logos to avoid assumption, 
-            or maybe add a generic one if requested? 
-            "No other badges, icons, or overlays" -> Badge is allowed. 
-            "No icons inside product images" -> Wait, reference has a logo top right. 
-            Request says "No icons inside product images" under STRICT RULES? 
-            "Badge: ONLY allowed badge is 'Best Seller'... No other badges, icons, or overlays".
-            Okay, I will strictly follow "No other badges, icons, or overlays".
-        */}
+        
 
         {/* Pagination Dots */}
         {visibleImages.length > 1 && (
@@ -127,7 +119,7 @@ export function ProductCard({ id, name, price, category, description, images }: 
         </p>
 
         {/* Bottom Row: Price & CTA */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 mt-auto">
+        <div className="flex items-center justify-between gap-3 pt-3 mt-auto">
           {/* Price Pill */}
           <div className="flex items-center justify-center rounded-full bg-secondary px-5 py-2.5 min-w-[80px]">
             <span className="text-lg font-bold text-foreground">
@@ -138,7 +130,7 @@ export function ProductCard({ id, name, price, category, description, images }: 
           {/* CTA Button */}
           <Button 
             asChild 
-            className="flex-1 rounded-full bg-black text-white hover:bg-black/80 h-[48px] px-6 text-base font-medium shadow-sm group min-w-[140px]"
+            className="flex-1 rounded-full bg-black text-white hover:bg-black/80 h-[48px] px-6 text-base font-medium shadow-sm group min-w-[80px]"
           >
             <Link href={`/products/${id}`} className="flex items-center justify-center gap-2">
               Buy Now
