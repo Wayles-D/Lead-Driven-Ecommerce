@@ -15,7 +15,6 @@ import {
   Package, 
   LogOut,
   UserPlus,
-  ShoppingBag,
   Menu,
   X
 } from "lucide-react";
