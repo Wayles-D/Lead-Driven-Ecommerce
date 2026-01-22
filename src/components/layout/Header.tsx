@@ -157,23 +157,22 @@ export function Header() {
                     </>
                   ) : (
                     <>
-                      {session?.user?.role === "ADMIN" ? (
-                        <>
-                          <Link href="/admin" className="dropdown-item-strict">
-                            <LayoutDashboard size={18} />
-                            <span>Admin Dashboard</span>
-                          </Link>
-                          <Link href="/admin/orders" className="dropdown-item-strict">
-                            <ShoppingBag size={18} />
-                            <span>Orders</span>
-                          </Link>
-                        </>
-                      ) : (
-                        <Link href="/orders" className="dropdown-item-strict">
-                          <Package size={18} />
-                          <span>My Orders</span>
+                      <Link href="/account" className="dropdown-item-strict">
+                        <User size={18} />
+                        <span>My Account</span>
+                      </Link>
+
+                      {session?.user?.role === "ADMIN" && (
+                        <Link href="/admin" className="dropdown-item-strict">
+                          <LayoutDashboard size={18} />
+                          <span>Admin Dashboard</span>
                         </Link>
                       )}
+
+                      <Link href="/orders" className="dropdown-item-strict">
+                        <Package size={18} />
+                        <span>My Orders</span>
+                      </Link>
                       
                       <div className="h-px bg-white/10 my-1 mx-2" />
                       <button 
