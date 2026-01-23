@@ -76,7 +76,7 @@ export function ForgotPasswordForm() {
           <ArrowLeft size={18} />
         </Link>
         <h1 className="text-3xl font-semibold tracking-tight uppercase playfair-black">Forgot Password</h1>
-        <p className="text-muted-foreground">Enter your email and we'll send you a link to reset your password.</p>
+        <p className="text-muted-foreground">Enter your email and we&apos;ll send you a link to reset your password.</p>
       </div>
 
       <AnimatePresence mode="wait">
