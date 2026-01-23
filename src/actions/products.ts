@@ -72,12 +72,34 @@ export async function updateProduct(id: string, formData: FormData) {
 export async function deleteProduct(id: string) {
   await requireAdmin();
 
-  await prisma.product.delete({
-    where: { id },
-  });
+  try {
+    // Check if product is in any orders
+    const orderCount = await prisma.orderItem.count({
+      where: { productId: id }
+    });
 
-  revalidatePath("/products");
-  revalidatePath("/admin");
+    if (orderCount > 0) {
+      return { 
+        success: false, 
+        message: "This product is linked to existing user orders and cannot be deleted. " + 
+                "To hide it from the store, please set its status to 'Draft' instead." 
+      };
+    }
+
+    await prisma.product.delete({
+      where: { id },
+    });
+
+    revalidatePath("/products");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    console.error("Delete product error:", error);
+    return { 
+      success: false, 
+      message: "An unexpected error occurred while trying to delete the product." 
+    };
+  }
 }
 
 export async function toggleProductStatus(id: string, isActive: boolean) {

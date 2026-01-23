@@ -61,8 +61,8 @@ export async function registerUser(formData: FormData) {
     },
   });
 
-  // Welcome Email (Non-blocking)
-  EmailService.sendWelcomeEmail(email, firstName);
+  // Welcome Email (Non-blocking but awaited to ensure trigger)
+  await EmailService.sendWelcomeEmail(email, firstName);
 
   return { success: true };
 }
@@ -84,8 +84,8 @@ export async function forgotPassword(formData: FormData) {
   const resetToken = crypto.randomBytes(32).toString("hex");
   const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
   
-  // Expiry: 1 hour from now
-  const expires = new Date(Date.now() + 3600000);
+  // Expiry: 5 minutes from now
+  const expires = new Date(Date.now() + 300000);
 
   await prisma.user.update({
     where: { id: user.id },
@@ -95,7 +95,7 @@ export async function forgotPassword(formData: FormData) {
     }
   });
 
-  const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}&email=${email}`;
+  const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`;
   await EmailService.sendPasswordResetEmail(email, resetUrl);
 
   return { success: true };
@@ -106,16 +106,14 @@ export async function forgotPassword(formData: FormData) {
  */
 export async function resetPassword(formData: FormData) {
   const token = formData.get("token") as string;
-  const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  if (!token || !email || !password) return { error: "All fields are required" };
+  if (!token || !password) return { error: "Reset token and new password are required" };
 
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: {
-      email,
       resetPasswordToken: hashedToken,
       resetPasswordExpires: { gt: new Date() }
     }

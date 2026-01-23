@@ -3,15 +3,18 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { cn, formatCurrency } from "@/lib/utils";
-import { deleteProduct, toggleProductStatus } from "@/actions/products";
+import { toggleProductStatus } from "@/actions/products";
 import { HorizontalTable } from "@/components/ui/HorizontalTable";
-import { Package, Plus, Edit, Trash2 } from "lucide-react";
+import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
+import { Package, Plus, Edit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default async function AdminDashboard() {
   const products = await prisma.product.findMany({
     orderBy: { createdAt: "desc" },
   });
+
+  
 
   return (
     <div className="space-y-8">
@@ -97,12 +100,7 @@ export default async function AdminDashboard() {
                             Edit
                           </Link>
                         </Button>
-                        <form action={deleteProduct.bind(null, product.id)} className="inline">
-                          <Button variant="ghost" size="sm" type="submit" className="rounded-xl hover:bg-destructive/10 hover:text-destructive gap-2 font-bold py-0 h-9">
-                            <Trash2 size={14} />
-                            Delete
-                          </Button>
-                        </form>
+                        <DeleteProductButton productId={product.id} />
                       </div>
                     </td>
                   </tr>

@@ -131,7 +131,7 @@ export const EmailService = {
       <p>A request was made to reset the password for your OML Soles account.</p>
       <p>If you did not make this request, you can safely ignore this email. Your account remains secure. If you did, click the button below to choose a new password.</p>
       ${getButton("Reset Security Credentials", resetLink)}
-      <p style="font-size: 12px; color: #999;">This link will remain active for the next 60 minutes.</p>
+      <p style="font-size: 12px; color: #999;">This link will remain active for the next 5 minutes.</p>
     `;
     await sendEmail(to, subject, getHtmlWrapper("Reset Password", content));
   },

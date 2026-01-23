@@ -207,12 +207,12 @@ function HeroSlider() {
               </p>
               
               <div className="pt-6 md:pt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button size="lg" asChild className="h-12 md:h-16 px-8 md:px-12 rounded-2xl text-sm md:text-lg font-black bg-white text-black hover:bg-white/90 shadow-2xl transition-all duration-500">
+                <Button size="lg" asChild className="h-12 md:h-16 px-8 md:px-12 rounded-2xl text-sm md:text-lg font-black bg-white text-black hover:bg-transparent hover:text-white  shadow-2xl transition-all duration-500">
                   <Link href="/products">View Collection</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="h-12 md:h-16 px-8 md:px-12 rounded-2xl text-sm md:text-lg font-black border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-500">
-                  <Link href={ApiService.whatsapp.getLink(`Hello OML Soles! I'm interested in the ${slides[current].headline} series.`)} target="_blank">
-                    Ask on WhatsApp
+                <Button size="lg" variant="outline" asChild className="h-12 md:h-16 px-8 md:px-12 rounded-2xl text-sm md:text-lg font-black border-2 border-white/30 text-white bg-transparent transition-all duration-500">
+                  <Link href={"/about"}>
+                    Our Story
                   </Link>
                 </Button>
               </div>
