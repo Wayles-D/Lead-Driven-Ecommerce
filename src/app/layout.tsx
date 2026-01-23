@@ -11,6 +11,9 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 export const metadata: Metadata = {
   title: "OML Soles",
   description: "...the soft feel your feet needs",
+  icons: {
+    icon: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1765226721/Brown_and_Beige_Modern_Aesthetic_Fashion_Store_Design_Logo_2_ladbpd.png",
+  },
 };
 
 export default function RootLayout({
