@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -115,7 +116,9 @@ export function Header() {
 
         {/* Desktop Search */}
         <div className="hidden md:flex items-center flex-1 max-w-[320px] mx-8">
-          <SearchInput isTransparent={isTransparent} />
+          <Suspense fallback={<div className="w-full h-10 bg-secondary/10 rounded-full animate-pulse" />}>
+            <SearchInput isTransparent={isTransparent} />
+          </Suspense>
         </div>
 
         {/* Desktop Navigation */}
@@ -275,7 +278,9 @@ export function Header() {
             className="md:hidden border-t bg-background overflow-hidden"
           >
             <nav className="flex flex-col p-4 gap-4">
-              <SearchInput className="max-w-none" />
+              <Suspense fallback={<div className="w-full h-10 bg-secondary/10 rounded-full animate-pulse" />}>
+                <SearchInput className="max-w-none" />
+              </Suspense>
               <div className="flex flex-col gap-2">
               {navItems.map((item) => (
                 <Link
