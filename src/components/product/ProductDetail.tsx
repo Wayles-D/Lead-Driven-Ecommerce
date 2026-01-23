@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
-import { MessageCircle } from "lucide-react";
 import  {FaWhatsapp} from "react-icons/fa";
 import { ApiService } from "@/lib/api";
 import { useSession } from "next-auth/react";

@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ShieldCheck, Package, MessageSquare, Star } from "lucide-react";
+import { ArrowRight, ShieldCheck, Package, Star } from "lucide-react";
 import { ApiService } from "@/lib/api";
 import { FaWhatsapp } from "react-icons/fa";
 
