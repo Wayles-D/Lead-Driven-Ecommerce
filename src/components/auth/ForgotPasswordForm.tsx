@@ -54,7 +54,7 @@ export function ForgotPasswordForm() {
         </div>
         <div className="pt-4">
           <Button asChild variant="outline" className="w-full h-12 rounded-xl">
-            <Link href="/login">Return to login</Link>
+            <Link href="/login?mode=signin">Return to login</Link>
           </Button>
         </div>
       </motion.div>
@@ -70,7 +70,7 @@ export function ForgotPasswordForm() {
     >
       <div className="space-y-2 text-center relative">
         <Link 
-          href="/login" 
+          href="/login?mode=signin" 
           className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft size={18} />

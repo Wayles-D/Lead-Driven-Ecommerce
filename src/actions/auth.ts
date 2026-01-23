@@ -84,8 +84,8 @@ export async function forgotPassword(formData: FormData) {
   const resetToken = crypto.randomBytes(32).toString("hex");
   const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
   
-  // Expiry: 5 minutes from now
-  const expires = new Date(Date.now() + 300000);
+  // Strict Expiry: 5 minutes from now
+  const expires = new Date(Date.now() + 5 * 60 * 1000);
 
   await prisma.user.update({
     where: { id: user.id },
@@ -102,13 +102,36 @@ export async function forgotPassword(formData: FormData) {
 }
 
 /**
+ * Validates a password reset token on page load
+ */
+export async function validateResetToken(token: string) {
+  if (!token) return { valid: false, error: "Token is missing" };
+
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  const user = await prisma.user.findUnique({
+    where: {
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { gt: new Date() }
+    }
+  });
+
+  if (!user) {
+    return { valid: false, error: "This password reset link has expired or is invalid." };
+  }
+
+  return { valid: true };
+}
+
+/**
  * Reset Password Action
  */
 export async function resetPassword(formData: FormData) {
   const token = formData.get("token") as string;
   const password = formData.get("password") as string;
 
-  if (!token || !password) return { error: "Reset token and new password are required" };
+  if (!token) return { error: "Reset token is required" };
+  if (!password || password.length < 6) return { error: "Password must be at least 6 characters" };
 
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 

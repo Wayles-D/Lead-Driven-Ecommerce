@@ -15,8 +15,8 @@ import { getToken } from "next-auth/jwt";
 // Public routes that don't require authentication
 const publicRoutes = ["/", "/products"];
 
-// Auth routes (login, signup)
-const authRoutes = ["/login", "/signup"];
+// Auth routes (login, signup, reset-password)
+const authRoutes = ["/login", "/signup", "/reset-password"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

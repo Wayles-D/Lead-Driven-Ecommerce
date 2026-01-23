@@ -44,7 +44,7 @@ export function SignupForm() {
                 });
 
                 if (loginResult?.error) {
-                    router.push("/login?message=Account created successfully. Please sign in.");
+                    router.push("/login?mode=signin&message=Account created successfully. Please sign in.");
                 } else {
                     router.push("/");
                     router.refresh();
@@ -164,7 +164,7 @@ export function SignupForm() {
 
             <div className="text-center text-sm pt-2">
                 <span className="text-muted-foreground">Already have an account? </span>
-                <Link href="/login" className="text-primary hover:text-primary/80 font-medium transition-colors">
+                <Link href="/login?mode=signin" className="text-primary hover:text-primary/80 font-medium transition-colors">
                     Log in
                 </Link>
             </div>

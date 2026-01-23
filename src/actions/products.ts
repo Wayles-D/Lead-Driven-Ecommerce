@@ -113,3 +113,24 @@ export async function toggleProductStatus(id: string, isActive: boolean) {
   revalidatePath("/products");
   revalidatePath("/admin");
 }
+
+export async function searchProducts(query: string) {
+  if (!query || typeof query !== "string") return [];
+
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) return [];
+
+  return await prisma.product.findMany({
+    where: {
+      isActive: true,
+      OR: [
+        { name: { contains: trimmedQuery, mode: "insensitive" } },
+        { description: { contains: trimmedQuery, mode: "insensitive" } },
+        { category: { contains: trimmedQuery, mode: "insensitive" } },
+      ],
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}

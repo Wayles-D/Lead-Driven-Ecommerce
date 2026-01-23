@@ -99,7 +99,7 @@ export function LoginForm() {
         <div className="space-y-2">
           <div className="flex justify-between items-center px-1">
              <label className="text-sm font-medium" htmlFor="password">Password</label>
-             <Link href="/forgot-password" virtual-element="forgot-password-link" className="text-xs text-primary hover:text-primary/80 transition-colors">
+             <Link href="/login?mode=forgot" className="text-xs text-primary hover:text-primary/80 transition-colors">
                Forgot password?
              </Link>
           </div>
@@ -142,7 +142,7 @@ export function LoginForm() {
 
       <div className="text-center text-sm pt-2">
         <span className="text-muted-foreground">Don&apos;t have an account? </span>
-        <Link href="/signup" className="text-primary hover:text-primary/80 font-medium transition-colors">
+        <Link href="/login?mode=signup" className="text-primary hover:text-primary/80 font-medium transition-colors">
           Sign up
         </Link>
       </div>
