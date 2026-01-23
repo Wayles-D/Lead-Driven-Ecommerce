@@ -194,9 +194,26 @@ export const ApiService = {
    * Shared External Assets (Category placeholders, etc.)
    */
   assets: {
+    hero: [
+      {
+        url: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1753045322/Oml_hero_img_qfjpdy.avif",
+        headline: "Handcrafted Luxury",
+        subtext: "Experience the intentional comfort of footwear built to last and designed for you."
+      },
+      {
+        url: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769154694/03db9648-f716-4942-8018-c938e041cf59.png",
+        headline: "Made Just for You",
+        subtext: "Every pair is meticulously handcrafted on demand with the finest premium materials."
+      },
+      {
+        url: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769154779/6701851f-c066-4e7d-b3ca-c1230781c5ac.png",
+        headline: "Quiet Luxury",
+        subtext: "Craftsmanship that speaks for itself. Discover the soft feel your feet needs."
+      }
+    ],
     placeholders: {
-      sandals: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1764972050/9176554c-fe50-4561-8e55-842be195866e.png",
-      slides: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1764972050/9176554c-fe50-4561-8e55-842be195866e.png",
+      sandals: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769153116/d05f8553-346a-4c7b-8157-8feb797f7ae2.png",
+      slides: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769152753/dc0f9f9e-7209-400d-b38e-3b36049da2fe.png",
       slippers: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1764972050/9176554c-fe50-4561-8e55-842be195866e.png",
     }
   }

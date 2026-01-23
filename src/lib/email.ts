@@ -10,7 +10,7 @@ if (apiKey) {
 }
 
 const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || "no-reply@lead-driven.com";
-const SENDER_NAME = "LDE Store";
+const SENDER_NAME = "OML Soles";
 
 /**
  * Base email sending function
@@ -47,7 +47,7 @@ const getHtmlWrapper = (title: string, content: string) => `
     <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
       <!-- Header -->
       <div style="background-color: #000000; padding: 40px; text-align: center;">
-        <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: -1px; font-weight: 900; text-transform: uppercase;">LDE<span style="opacity: 0.5; font-weight: 300;">.STORE</span></h1>
+        <img src="https://res.cloudinary.com/dmb5ggmvg/image/upload/v1765226721/Brown_and_Beige_Modern_Aesthetic_Fashion_Store_Design_Logo_2_ladbpd.png" alt="OML Soles" style="height: 60px; width: auto;" />
       </div>
       
       <!-- Content -->
@@ -60,14 +60,14 @@ const getHtmlWrapper = (title: string, content: string) => `
       
       <!-- Footer -->
       <div style="padding: 40px; background-color: #fafafa; border-top: 1px solid #eeeeee; text-align: center;">
-        <p style="margin: 0; font-size: 12px; color: #999999; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Handcrafted Footwear & Goods</p>
+        <p style="margin: 0; font-size: 12px; color: #999999; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">...the soft feel your feet needs</p>
         <p style="margin: 10px 0 0; font-size: 14px; font-weight: 500;">
           <a href="${process.env.NEXTAUTH_URL}" style="color: #000000; text-decoration: none;">Visit Website</a>
         </p>
       </div>
     </div>
     <div style="max-width: 600px; margin: 20px auto; text-align: center;">
-      <p style="font-size: 11px; color: #aaaaaa;">&copy; ${new Date().getFullYear()} Lead-Driven Ecommerce. All rights reserved.</p>
+      <p style="font-size: 11px; color: #aaaaaa;">&copy; ${new Date().getFullYear()} OML Soles. All rights reserved.</p>
     </div>
   </div>
 `;
@@ -89,7 +89,7 @@ export const EmailService = {
     const firstName = name.split(' ')[0];
     const subject = `Welcome to the Collection, ${firstName}`;
     const content = `
-      <p>Welcome to LDE.STORE, ${firstName}. We're thrilled to have you join our community of handcrafted enthusiasts.</p>
+      <p>Welcome to OML Soles, ${firstName}. We're thrilled to have you join our community of handcrafted enthusiasts.</p>
       <p>Your account is now active. You can explore our latest collections, track your orders, and manage your preferences directly from your dashboard.</p>
       ${getButton("Start Shopping", `${process.env.NEXTAUTH_URL}/products`)}
       <p style="margin-top: 30px; font-size: 14px; font-style: italic; color: #888;">"Quality is not an act, it is a habit."</p>
@@ -128,7 +128,7 @@ export const EmailService = {
   sendPasswordResetEmail: async (to: string, resetLink: string) => {
     const subject = "Restore Access to Your Account";
     const content = `
-      <p>A request was made to reset the password for your LDE.STORE account.</p>
+      <p>A request was made to reset the password for your OML Soles account.</p>
       <p>If you did not make this request, you can safely ignore this email. Your account remains secure. If you did, click the button below to choose a new password.</p>
       ${getButton("Reset Security Credentials", resetLink)}
       <p style="font-size: 12px; color: #999;">This link will remain active for the next 60 minutes.</p>

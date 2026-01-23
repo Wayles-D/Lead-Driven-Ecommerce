@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap");
+
 :root {
   /* Base - Warm, clean, premium */
   --background: 255 255 255; /* #FFFFFF */
@@ -38,6 +41,26 @@
 
     /* Radius */
     --radius: 1.5rem;
+}
+
+.poppins-black {
+  font-family: "Poppins", serif;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-style: normal;
+}
+.playfair-black {
+  font-family: "Playfair", serif;
+  font-optical-sizing: auto;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.playfair-bold {
+  font-family: "Playfair", serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
 }
 
 @layer base {
@@ -90,4 +113,10 @@
   .dropdown-item-strict:hover * {
     color: rgb(0, 0, 0) !important;
   }
+
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
 }
+

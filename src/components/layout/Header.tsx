@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -53,7 +54,7 @@ export function Header() {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-[60] w-full border-b bg-background/95 backdrop-blur-md">
+    <header className="fixed top-0 z-[60] w-full border-b bg-background/95 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* Mobile Menu Toggle */}
@@ -65,8 +66,20 @@ export function Header() {
           </button>
 
           {/* Logo */}
-          <Link href="/" className="font-bold text-xl tracking-tighter hover:opacity-80 transition-opacity">
-            LDE<span className="text-muted-foreground font-normal">.STORE</span>
+          <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <div className="relative w-10 h-10 md:w-12 md:h-12 overflow-hidden rounded-lg shadow-md md:shadow-lg border border-border/50">
+              <Image 
+                src="https://res.cloudinary.com/dmb5ggmvg/image/upload/v1765226721/Brown_and_Beige_Modern_Aesthetic_Fashion_Store_Design_Logo_2_ladbpd.png" 
+                alt="OML Soles" 
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+           <div className="gap-y-0">
+                <h1 className="relative text-2xl poppins-black text-black hidden lg:block playfair-black">OML SOLES</h1>
+                <p className="relative text-[8px] hidden lg:block text-right text-black">...the soft feel your feet needs</p>
+              </div>
           </Link>
         </div>
 

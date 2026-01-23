@@ -9,7 +9,7 @@ import { initiateCheckoutPayment } from "@/actions/payment";
 import { redirect } from "next/navigation";
 
 export const metadata = {
-    title: "Order History | LDE Store",
+    title: "Order History | OML Soles",
     description: "View and track your previous orders",
 };
 

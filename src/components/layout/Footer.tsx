@@ -1,13 +1,28 @@
+import Image from "next/image";
+
 export function Footer() {
   return (
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-2">
-            <h3 className="font-bold text-lg mb-4">LDE Store</h3>
+          <div className="md:col-span-2 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="relative w-12 h-12 overflow-hidden rounded-lg shadow-xl border border-border/50">
+                <Image 
+                  src="https://res.cloudinary.com/dmb5ggmvg/image/upload/v1765226721/Brown_and_Beige_Modern_Aesthetic_Fashion_Store_Design_Logo_2_ladbpd.png" 
+                  alt="OML Soles" 
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold playfair-black">OML SOLES</h3>
+                <p className="text-[8px] text-black noto-sans-light-300">...the soft feel your feet needs</p>
+              </div>
+            </div>
             <p className="text-muted-foreground max-w-sm">
-              Premium quality products for discerning customers. 
-              We prioritize quality, service, and transparent communication.
+              Artisan footwear handcrafted with intention and premium materials. 
+              We believe in the beauty of made-to-order craftsmanship and the comfort of quality.
             </p>
           </div>
           
@@ -31,7 +46,7 @@ export function Footer() {
         </div>
         
         <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} Lead-Driven Ecommerce. All rights reserved.
+          &copy; {new Date().getFullYear()} OML Soles. All rights reserved.
         </div>
       </div>
     </footer>

@@ -5,6 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import { MessageCircle } from "lucide-react";
+import  {FaWhatsapp} from "react-icons/fa";
 import { ApiService } from "@/lib/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -151,7 +152,7 @@ export function ProductDetail({ product }: { product: Product }) {
                     </div>
                     <Button 
                         size="lg" 
-                        className="flex-1 h-14 rounded-2xl text-base font-black shadow-xl shadow-primary/10 transition-all active:scale-[0.98]"
+                        className="flex-1 h-14 py-2 md:py-0 rounded-2xl text-base font-black shadow-xl shadow-primary/10 transition-all active:scale-[0.98]"
                         disabled={!selectedSize}
                         onClick={handleAddToCart}
                     >
@@ -180,7 +181,7 @@ export function ProductDetail({ product }: { product: Product }) {
                             rel="noopener noreferrer"
                             className="flex items-center justify-center"
                         >
-                            <MessageCircle size={20} className="shrink-0" />
+                            <FaWhatsapp size={20} className="shrink-0" />
                             <span>Ask about this product</span>
                         </a>
                     </Button>

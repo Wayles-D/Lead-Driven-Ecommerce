@@ -9,8 +9,8 @@ import { Footer } from "@/components/layout/Footer";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Lead-Driven Ecommerce",
-  description: "Premium ecommerce with WhatsApp-powered order confirmation",
+  title: "OML Soles",
+  description: "...the soft feel your feet needs",
 };
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className={cn("min-h-screen bg-background font-sans antialiased flex flex-col", inter.variable)}>
         <Providers>
           <Header />
-          <main className="flex-1">
+          <main className="flex-1 pt-16">
             {children}
           </main>
           <Footer />
