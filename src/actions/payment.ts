@@ -67,7 +67,7 @@ export async function verifyOrderPayment(reference: string) {
     const verification = await ApiService.paystack.verifyTransaction(reference);
     
     if (verification.status && verification.data.status === "success") {
-      const orderId = (verification.data.metadata as any)?.orderId;
+      const orderId = (verification.data.metadata as { orderId?: string })?.orderId;
       if (!orderId) throw new Error("Order ID not found in transaction metadata");
 
       const order = await prisma.order.findUnique({

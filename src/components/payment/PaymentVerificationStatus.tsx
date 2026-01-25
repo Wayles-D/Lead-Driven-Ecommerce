@@ -5,11 +5,7 @@ import { verifyOrderPayment } from "@/actions/payment";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
-interface PaymentVerificationStatusProps {
-  // orderId removed - reference is used to resolve it
-}
-
-export function PaymentVerificationStatus({}: PaymentVerificationStatusProps) {
+export function PaymentVerificationStatus() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reference = searchParams.get("reference");
