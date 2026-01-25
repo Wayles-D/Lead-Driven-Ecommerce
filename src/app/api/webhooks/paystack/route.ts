@@ -44,38 +44,47 @@ export async function POST(req: NextRequest) {
 
         if (!order) {
             console.error(`❌ Webhook Error: Order ${orderId} not found`);
-            return;
+            throw new Error(`Order ${orderId} not found`);
+        }
+
+        // 1. Amount Verification (Critical for production)
+        const expectedAmountKobo = order.totalAmount * 100;
+        if (Math.abs(amount - expectedAmountKobo) > 1) { // Allowing tiny decimal mismatch if any
+            console.error(`❌ Webhook Error: Amount mismatch for Order ${orderId}. Expected ${expectedAmountKobo}, got ${amount}`);
+            throw new Error("Amount mismatch");
         }
 
         if (order.status === "PAID") return; // Already processed
 
-        // 1. Update Order status
+        // 2. Update Order status
         await tx.order.update({
           where: { id: orderId },
           data: { status: "PAID" },
         });
 
-        // 2. Create/Update Payment record
+        // 3. Create/Update Payment record
         await tx.payment.upsert({
           where: { orderId: orderId },
           update: {
             status: "SUCCESS",
             paidAt: new Date(paid_at),
-            amount: amount, // Amount is in Kobo from Paystack
+            amount: amount / 100, // Store in major units
+            reference: reference, // Ensure it's the actual reference from Paystack
           },
           create: {
             orderId: orderId,
             provider: "paystack",
             reference: reference,
             status: "SUCCESS",
-            amount: amount,
+            amount: amount / 100,
             paidAt: new Date(paid_at),
           },
         });
 
-        // 3. Trigger Email (Non-blocking but inside transaction logic to ensure context)
+        // 4. Trigger Email (Inside transaction flow to guarantee it happens with the status change)
         if (order.user.email) {
           await EmailService.sendOrderConfirmation(order.user.email, orderId, order.totalAmount);
+          console.log(`📧 Email triggered for Order ${orderId}`);
         }
       });
     }

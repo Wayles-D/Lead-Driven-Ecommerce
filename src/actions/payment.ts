@@ -55,7 +55,7 @@ export async function initiateCheckoutPayment(orderId: string) {
 
 /**
  * Verifies a payment status for a specific transaction reference.
- * Checks DB first (updated by webhook), then falls back to Paystack API.
+ * Strictly observational - checks the database status which is updated via Webhook.
  */
 export async function verifyOrderPayment(reference: string) {
   const session = await requireAuth();
@@ -63,53 +63,45 @@ export async function verifyOrderPayment(reference: string) {
   if (!reference) throw new Error("Reference is required");
 
   try {
-    // 1. Proactive check against Paystack API
-    const verification = await ApiService.paystack.verifyTransaction(reference);
-    
-    if (verification.status && verification.data.status === "success") {
-      const orderId = (verification.data.metadata as { orderId?: string })?.orderId;
-      if (!orderId) throw new Error("Order ID not found in transaction metadata");
+    // 1. Find the order associated with this reference
+    const payment = await prisma.payment.findFirst({
+      where: { reference },
+      include: { order: true }
+    });
 
-      const order = await prisma.order.findUnique({
-        where: { id: orderId },
-      });
-
-      if (!order) throw new Error("Order not found");
-      if (order.userId !== session.user.id) throw new Error("Unauthorized");
-
-      // 2. Update DB if not already marked PAID
-      if (order.status !== "PAID") {
-        await prisma.$transaction(async (tx) => {
-          await tx.order.update({
-            where: { id: orderId },
-            data: { status: "PAID" },
-          });
-
-          await tx.payment.upsert({
-            where: { orderId: orderId },
-            update: { 
-                status: "SUCCESS", 
-                paidAt: new Date(), 
-                amount: verification.data.amount / 100 
-            },
-            create: {
-              orderId,
-              provider: "paystack",
-              reference: verification.data.reference,
-              status: "SUCCESS",
-              amount: verification.data.amount / 100,
-              paidAt: new Date(),
-            }
-          });
-        });
-      }
-
-      return { success: true, orderId };
+    // If payment record exists, check order status
+    if (payment && payment.order.userId === session.user.id) {
+       return { 
+         success: payment.order.status === "PAID", 
+         orderId: payment.orderId,
+         status: payment.order.status 
+       };
     }
 
-    return { success: false, status: verification.data.status };
+    // 2. Fallback: Lookup orderId from transaction metadata if payment record doesn't exist yet
+    // This allows the UI to resolve the orderId even if the webhook is mid-process.
+    const verification = await ApiService.paystack.verifyTransaction(reference);
+    
+    if (verification.status) {
+      const orderId = (verification.data.metadata as { orderId?: string })?.orderId;
+      if (orderId) {
+        const order = await prisma.order.findUnique({
+          where: { id: orderId }
+        });
+        
+        if (order && order.userId === session.user.id) {
+          return { 
+            success: order.status === "PAID", 
+            orderId,
+            status: order.status 
+          };
+        }
+      }
+    }
+
+    return { success: false, status: "PENDING" };
   } catch (error) {
-    console.error("Payment verification error:", error);
-    return { success: false, error: "Unable to verify payment at this moment." };
+    console.error("Payment verification UX error:", error);
+    return { success: false, error: "Unable to verify payment status." };
   }
 }
