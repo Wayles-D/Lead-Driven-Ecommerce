@@ -95,11 +95,16 @@ export const ApiService = {
      */
     initializePayment: async (email: string, amount: number, orderId: string) => {
       checkPaystackKey();
+      const callbackUrl = (process.env.PAYSTACK_CALLBACK_URL || `${process.env.NEXTAUTH_URL}/orders/{orderId}/verify`)
+        .replace("{orderId}", orderId);
+
+      const reference = `${orderId}_${Date.now()}`;
+
       const params = {
         email,
         amount: amount * 100,
-        reference: orderId,
-        callback_url: `${process.env.NEXTAUTH_URL}/orders/${orderId}/verify`,
+        reference,
+        callback_url: callbackUrl,
         metadata: {
           orderId,
           custom_fields: [
@@ -149,12 +154,17 @@ export const ApiService = {
 
     /**
      * Verify Paystack Webhook signature (Server only)
+     * Payload must be the raw string body of the request.
      */
-    verifyWebhookSignature: (signature: string, payload: unknown) => {
-      checkPaystackKey();
+    verifyWebhookSignature: (signature: string, payload: string) => {
+      const webhookSecret = process.env.PAYSTACK_WEBHOOK_SECRET;
+      if (!webhookSecret) {
+        throw new Error("PAYSTACK_WEBHOOK_SECRET is not defined");
+      }
+      
       const hash = crypto
-        .createHmac("sha512", PAYSTACK_SECRET_KEY)
-        .update(JSON.stringify(payload))
+        .createHmac("sha512", webhookSecret)
+        .update(payload)
         .digest("hex");
       
       return hash === signature;

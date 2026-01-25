@@ -11,6 +11,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -29,6 +30,12 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        // Rate limiting: 5 requests per minute
+        const limiter = await rateLimit({ limit: 5, windowMs: 60 * 1000, identifier: "auth-login" });
+        if (!limiter.success) {
+          throw new Error(limiter.error);
+        }
+
         if (!credentials?.email || !credentials?.password) {
           return null;
         }

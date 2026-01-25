@@ -1,6 +1,6 @@
-import { searchProducts } from "@/actions/products";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Metadata } from "next";
+import { getCachedSearchResults } from "@/lib/cache";
 
 export const metadata: Metadata = {
   title: "Search Results | OML Soles",
@@ -21,7 +21,7 @@ export default async function SearchPage({
   searchParams,
 }: SearchPageProps) {
   const query = searchParams.q || "";
-  const products = await searchProducts(query);
+  const products = await getCachedSearchResults(query);
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-20 min-h-[70vh]">

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { EmailService } from "@/lib/email";
 import * as crypto from "crypto";
+import { rateLimit } from "@/lib/rate-limit";
 
 const registerSchema = z.object({
   firstName: z.string().min(2, "First name is required"),
@@ -15,6 +16,10 @@ const registerSchema = z.object({
 });
 
 export async function registerUser(formData: FormData) {
+  // Rate limiting: 5 requests per minute
+  const limiter = await rateLimit({ limit: 5, windowMs: 60 * 1000, identifier: "auth-register" });
+  if (!limiter.success) return { error: limiter.error };
+
   const rawData = {
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
@@ -71,6 +76,10 @@ export async function registerUser(formData: FormData) {
  * Forgot Password Action
  */
 export async function forgotPassword(formData: FormData) {
+  // Rate limiting: 5 requests per minute
+  const limiter = await rateLimit({ limit: 5, windowMs: 60 * 1000, identifier: "auth-forgot" });
+  if (!limiter.success) return { error: limiter.error };
+
   const email = formData.get("email") as string;
   if (!email) return { error: "Email is required" };
 
@@ -127,6 +136,10 @@ export async function validateResetToken(token: string) {
  * Reset Password Action
  */
 export async function resetPassword(formData: FormData) {
+  // Rate limiting: 5 requests per minute
+  const limiter = await rateLimit({ limit: 5, windowMs: 60 * 1000, identifier: "auth-reset" });
+  if (!limiter.success) return { error: limiter.error };
+
   const token = formData.get("token") as string;
   const password = formData.get("password") as string;
 

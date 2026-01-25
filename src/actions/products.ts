@@ -3,8 +3,9 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/utils/session";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import { rateLimit } from "@/lib/rate-limit";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -22,6 +23,10 @@ const productSchema = z.object({
 
 export async function createProduct(formData: FormData) {
   await requireAdmin();
+
+  // Rate limiting: 10 requests per minute
+  const limiter = await rateLimit({ limit: 10, windowMs: 60 * 1000, identifier: "admin-mutation" });
+  if (!limiter.success) throw new Error(limiter.error);
 
   const rawData = {
     name: formData.get("name"),
@@ -41,11 +46,16 @@ export async function createProduct(formData: FormData) {
 
   revalidatePath("/products");
   revalidatePath("/admin");
+  revalidateTag("products");
   redirect("/admin");
 }
 
 export async function updateProduct(id: string, formData: FormData) {
   await requireAdmin();
+
+  // Rate limiting: 10 requests per minute
+  const limiter = await rateLimit({ limit: 10, windowMs: 60 * 1000, identifier: "admin-mutation" });
+  if (!limiter.success) throw new Error(limiter.error);
 
   const rawData = {
     name: formData.get("name"),
@@ -66,11 +76,16 @@ export async function updateProduct(id: string, formData: FormData) {
 
   revalidatePath("/products");
   revalidatePath("/admin");
+  revalidateTag("products");
   redirect("/admin");
 }
 
 export async function deleteProduct(id: string) {
   await requireAdmin();
+
+  // Rate limiting: 10 requests per minute
+  const limiter = await rateLimit({ limit: 10, windowMs: 60 * 1000, identifier: "admin-mutation" });
+  if (!limiter.success) throw new Error(limiter.error);
 
   try {
     // Check if product is in any orders
@@ -92,6 +107,7 @@ export async function deleteProduct(id: string) {
 
     revalidatePath("/products");
     revalidatePath("/admin");
+    revalidateTag("products");
     return { success: true };
   } catch (error) {
     console.error("Delete product error:", error);
@@ -105,6 +121,10 @@ export async function deleteProduct(id: string) {
 export async function toggleProductStatus(id: string, isActive: boolean) {
   await requireAdmin();
 
+  // Rate limiting: 10 requests per minute
+  const limiter = await rateLimit({ limit: 10, windowMs: 60 * 1000, identifier: "admin-mutation" });
+  if (!limiter.success) throw new Error(limiter.error);
+
   await prisma.product.update({
     where: { id },
     data: { isActive },
@@ -112,6 +132,7 @@ export async function toggleProductStatus(id: string, isActive: boolean) {
 
   revalidatePath("/products");
   revalidatePath("/admin");
+  revalidateTag("products");
 }
 
 export async function searchProducts(query: string) {

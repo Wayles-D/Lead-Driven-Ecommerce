@@ -1,80 +1,88 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { ApiService } from "@/lib/api";
+import { prisma } from "@/lib/prisma";
+import { EmailService } from "@/lib/email";
 
+/**
+ * Paystack Webhook Route
+ * 
+ * Securely handles high-confidence payment events directly from Paystack.
+ */
 export async function POST(req: NextRequest) {
-  const signature = req.headers.get("x-paystack-signature") || "";
+  const signature = req.headers.get("x-paystack-signature");
+  
   if (!signature) {
-    return new NextResponse("Missing signature", { status: 400 });
+    return new NextResponse("No signature provided", { status: 401 });
   }
 
-  const payload = await req.json();
+  // Get raw body for signature verification
+  const rawBody = await req.text();
 
-  if (!ApiService.paystack.verifyWebhookSignature(signature, payload)) {
-    return new NextResponse("Invalid signature", { status: 401 });
-  }
+  try {
+    const isValid = ApiService.paystack.verifyWebhookSignature(signature, rawBody);
+    
+    if (!isValid) {
+      console.warn("⚠️ Invalid Paystack signature received");
+      return new NextResponse("Invalid signature", { status: 401 });
+    }
 
-  const event = payload.event;
-  const data = payload.data;
+    const event = JSON.parse(rawBody);
 
-  // Handle charge.success
-  if (event === "charge.success") {
-    const reference = data.reference; // This matches Order ID usually, or we mapped it
-    // IMPORTANT: Verify amount matches expected
-    // For now assuming reference == Order ID. In production use custom fields metadata if needed.
-    const orderId = data.metadata?.orderId || reference;
+    // Only handle successful charges for now
+    if (event.event === "charge.success") {
+      const { reference, amount, paid_at, customer } = event.data;
+      const orderId = event.data.metadata?.orderId || reference;
 
-    try {
-        const order = await prisma.order.findUnique({
-            where: { id: orderId }
+      console.log(`✅ Webhook: Payment success for Order ${orderId}`);
+
+      // Update Order and create Payment record in a transaction
+      await prisma.$transaction(async (tx) => {
+        const order = await tx.order.findUnique({
+          where: { id: orderId },
+          include: { user: true }
         });
 
         if (!order) {
-             console.error(`Order ${orderId} not found for webhook`);
-             return new NextResponse("Order not found", { status: 404 });
-        }
-        
-        // Check if already paid to handle idempotency
-        if (order.status === "PAID") {
-            return new NextResponse("Order already paid", { status: 200 });
-        }
-        
-        // Verify amount (Paystack sends kobo, our DB has naira - wait, DB has Naira INT?)
-        // Let's check Schema or previous Logic.
-        // Product price is INT. order.totalAmount is INT.
-        // initializePayment multiplied by 100.
-        // So Paystack returns kobo.
-        const expectedAmountKobo = order.totalAmount * 100;
-        if (data.amount !== expectedAmountKobo) {
-             console.error(`Amount mismatch: Expected ${expectedAmountKobo}, got ${data.amount}`);
-             // Depending on policy, might flag manual review. For now, fail it.
-             return new NextResponse("Amount mismatch", { status: 400 });
+            console.error(`❌ Webhook Error: Order ${orderId} not found`);
+            return;
         }
 
-        await prisma.$transaction([
-            prisma.order.update({
-                where: { id: orderId },
-                data: { status: "PAID" }
-            }),
-            prisma.payment.create({
-                data: {
-                    orderId: orderId,
-                    provider: "paystack",
-                    reference: data.reference,
-                    status: "SUCCESS",
-                    amount: order.totalAmount, // Storing in Naira as per schema convention so far
-                    paidAt: new Date(data.paid_at),
-                }
-            })
-        ]);
+        if (order.status === "PAID") return; // Already processed
 
-        return new NextResponse("Payment processed", { status: 200 });
+        // 1. Update Order status
+        await tx.order.update({
+          where: { id: orderId },
+          data: { status: "PAID" },
+        });
 
-    } catch (error) {
-        console.error("Webhook processing error", error);
-        return new NextResponse("Internal Server Error", { status: 500 });
+        // 2. Create/Update Payment record
+        await tx.payment.upsert({
+          where: { orderId: orderId },
+          update: {
+            status: "SUCCESS",
+            paidAt: new Date(paid_at),
+            amount: amount, // Amount is in Kobo from Paystack
+          },
+          create: {
+            orderId: orderId,
+            provider: "paystack",
+            reference: reference,
+            status: "SUCCESS",
+            amount: amount,
+            paidAt: new Date(paid_at),
+          },
+        });
+
+        // 3. Trigger Email (Non-blocking but inside transaction logic to ensure context)
+        if (order.user.email) {
+          await EmailService.sendOrderConfirmation(order.user.email, orderId, order.totalAmount);
+        }
+      });
     }
-  }
 
-  return new NextResponse("Event ignored", { status: 200 });
+    return new NextResponse("OK", { status: 200 });
+  } catch (error) {
+    console.error("❌ Paystack Webhook Error:", error);
+    return new NextResponse("Webhook error", { status: 500 });
+  }
 }

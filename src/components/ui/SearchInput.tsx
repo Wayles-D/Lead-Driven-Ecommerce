@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,47 +13,72 @@ import { cn } from "@/lib/utils";
 export function SearchInput({ className, isTransparent }: { className?: string; isTransparent?: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  // Initialize query from URL once
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Use a ref to track if this is the initial mount to prevent immediate navigation on page load
-  const isInitialMount = useRef(true);
+  // Stable search function
+  const performSearch = useCallback((searchTerm: string) => {
+    const trimmedQuery = searchTerm.trim();
+    const currentQ = searchParams.get("q") || "";
+    
+    // Don't navigate if the query hasn't changed
+    if (trimmedQuery === currentQ) return;
 
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
+    if (trimmedQuery) {
+      router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
+    } else if (currentQ) {
+      // If query is cleared and we were on a search results page, go back to products
+      router.push("/products");
     }
+  }, [router, searchParams]);
+
+  // Debounce logic: only triggers navigation, never resets local state
+  useEffect(() => {
+    const currentQ = searchParams.get("q") || "";
+    const trimmedQuery = query.trim();
+    
+    // Avoid redundant navigation
+    if (trimmedQuery === currentQ) return;
 
     const timer = setTimeout(() => {
-      const trimmedQuery = query.trim();
-      if (trimmedQuery) {
-        router.push(`/search?q=${encodeURIComponent(trimmedQuery)}`);
-      } else if (searchParams.get("q")) {
-        // If query is cleared and we were on a search results page, go back to products
-        router.push("/products");
-      }
-    }, 400); // 400ms debounce for a snappy feel
+      performSearch(query);
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [query, router, searchParams]);
+  }, [query, performSearch, searchParams]);
 
-  // Sync state with URL when it changes externally (e.g. browser back button)
+  // Sync state with URL ONLY when it changes externally (e.g. browser back button)
+  // and NOT while the user is actively focused on the input.
   useEffect(() => {
     const q = searchParams.get("q") || "";
-    if (q !== query) {
+    if (q !== query && !isFocused) {
       setQuery(q);
     }
-  }, [searchParams, query]);
+  }, [searchParams]); // query removed from deps to prevent feedback loop
 
   const handleClear = () => {
     setQuery("");
     inputRef.current?.focus();
+    // If we're on a search page, clearing should navigate away
+    if (searchParams.get("q")) {
+      router.push("/products");
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    performSearch(query);
+    inputRef.current?.blur();
   };
 
   return (
-    <div className={cn("relative w-full max-w-[320px]", className)}>
+    <form 
+      onSubmit={handleSubmit}
+      className={cn("relative w-full max-w-[320px]", className)}
+    >
       <motion.div
         animate={isFocused ? { scale: 1.01 } : { scale: 1 }}
         className={cn(
@@ -103,6 +128,6 @@ export function SearchInput({ className, isTransparent }: { className?: string; 
           )}
         </AnimatePresence>
       </motion.div>
-    </div>
+    </form>
   );
 }

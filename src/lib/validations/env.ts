@@ -9,6 +9,10 @@ const requiredEnvVars = [
   "DATABASE_URL",
   "NEXTAUTH_URL",
   "NEXTAUTH_SECRET",
+  "PAYSTACK_PUBLIC_KEY",
+  "PAYSTACK_SECRET_KEY",
+  "PAYSTACK_WEBHOOK_SECRET",
+  "PAYSTACK_CALLBACK_URL",
 ] as const;
 
 export function validateEnv() {

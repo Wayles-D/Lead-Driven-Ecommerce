@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-16 md:gap-24 pb-16">
       {/* Hero Slider Section */}
-      <section className="relative h-[85vh] md:h-[100vh] lg:h-[90vh] flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
         <HeroSlider />
       </section>
 
@@ -157,19 +157,19 @@ function HeroSlider() {
   }, [slides.length]);
 
   useEffect(() => {
-    const timer = setInterval(nextSlide, 6000);
+    const timer = setInterval(nextSlide, 7000);
     return () => clearInterval(timer);
   }, [nextSlide]);
 
   return (
     <div className="relative w-full h-full group">
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         <motion.div
           key={current}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
           className="absolute inset-0 w-full h-full"
         >
           {/* Background Image */}
@@ -186,7 +186,7 @@ function HeroSlider() {
           </div>
 
           {/* Content */}
-          <div className="relative h-full container mx-auto px-4 flex flex-col items-center justify-center text-center text-white z-10">
+          <div className="relative h-full container mx-auto px-4 pt-16 flex flex-col items-center justify-center text-center text-white z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

@@ -56,6 +56,9 @@ export function Header() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  const isHome = pathname === "/";
+  const isTransparent = isHome && !isScrolled && !mobileMenuOpen;
+
   // Handle scroll for transparent navbar
   useEffect(() => {
     const handleScroll = () => {
@@ -65,8 +68,14 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isHome = pathname === "/";
-  const isTransparent = isHome && !isScrolled && !mobileMenuOpen;
+  // Set body class for homepage layout
+  useEffect(() => {
+    if (isHome) {
+      document.body.classList.add("is-home");
+    } else {
+      document.body.classList.remove("is-home");
+    }
+  }, [isHome]);
 
   return (
     <header 

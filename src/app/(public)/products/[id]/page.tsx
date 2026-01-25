@@ -1,7 +1,7 @@
-import { prisma } from "@/lib/prisma";
 import { ProductDetail } from "@/components/product/ProductDetail";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { getCachedProductById } from "@/lib/cache";
 
 interface ProductPageProps {
   params: {
@@ -10,9 +10,7 @@ interface ProductPageProps {
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const product = await prisma.product.findUnique({
-    where: { id: params.id },
-  });
+  const product = await getCachedProductById(params.id);
 
   if (!product) {
     return { title: "Product Not Found" };
@@ -25,9 +23,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await prisma.product.findUnique({
-    where: { id: params.id },
-  });
+  const product = await getCachedProductById(params.id);
 
   if (!product) {
     notFound();

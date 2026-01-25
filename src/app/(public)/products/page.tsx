@@ -1,6 +1,6 @@
-import { prisma } from "@/lib/prisma";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Metadata } from "next";
+import { getCachedProducts, getCachedCategories } from "@/lib/cache";
 
 export const metadata: Metadata = {
   title: "Shop Collection | Lead-Driven Ecommerce",
@@ -18,17 +18,8 @@ export default async function ProductsPage({
 }: ProductsPageProps) {
   const category = searchParams.category;
 
-  const products = await prisma.product.findMany({
-    where: {
-      isActive: true,
-      ...(category ? { category: category } : {}),
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
-  const categories = ["sandals", "slides", "slippers", "men", "women"];
+  const products = await getCachedProducts(category);
+  const categories = await getCachedCategories();
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">

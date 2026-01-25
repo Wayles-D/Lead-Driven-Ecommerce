@@ -33,14 +33,17 @@
   --whatsapp: 37 211 102; /* #25D366 */
   --whatsapp-foreground: 255 255 255;
 
-    /* Cards & Popovers - Solid & Opaque */
-    --card: 255 255 255; /* #FFFFFF */
-    --card-foreground: 23 23 23; /* #171717 */
-    --popover: 255 255 255;
-    --popover-foreground: 23 23 23;
+  /* Cards & Popovers - Solid & Opaque */
+  --card: 255 255 255; /* #FFFFFF */
+  --card-foreground: 23 23 23; /* #171717 */
+  --popover: 255 255 255;
+  --popover-foreground: 23 23 23;
 
-    /* Radius */
-    --radius: 1.5rem;
+  /* Radius */
+  --radius: 1.5rem;
+
+  /* Layout */
+  --navbar-height: 4rem;
 }
 
 .poppins-black {
@@ -69,6 +72,14 @@
     @apply bg-background text-foreground antialiased overflow-x-hidden w-full;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
     text-rendering: optimizeLegibility;
+  }
+
+  main {
+    padding-top: var(--navbar-height);
+  }
+
+  body.is-home main {
+    padding-top: 0;
   }
 }
 
@@ -119,4 +130,3 @@
     text-orientation: mixed;
   }
 }
-
