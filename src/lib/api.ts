@@ -95,8 +95,9 @@ export const ApiService = {
      */
     initializePayment: async (email: string, amount: number, orderId: string) => {
       checkPaystackKey();
-      const callbackUrl = (process.env.PAYSTACK_CALLBACK_URL || `${process.env.NEXTAUTH_URL}/orders/{orderId}/verify`)
-        .replace("{orderId}", orderId);
+      const callbackUrl =
+        process.env.PAYSTACK_CALLBACK_URL ||
+        `${process.env.NEXTAUTH_URL}/orders/verify`;
 
       const reference = `${orderId}_${Date.now()}`;
 

@@ -6,31 +6,39 @@ import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface PaymentVerificationStatusProps {
-  orderId: string;
+  // orderId removed - reference is used to resolve it
 }
 
-export function PaymentVerificationStatus({ orderId }: PaymentVerificationStatusProps) {
+export function PaymentVerificationStatus({}: PaymentVerificationStatusProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const reference = searchParams.get("reference") || undefined;
+  const reference = searchParams.get("reference");
   
   const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
   const [message, setMessage] = useState("Verifying your payment with Paystack...");
+  const [resolvedOrderId, setResolvedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!reference) {
+      setStatus("error");
+      setMessage("No transaction reference found.");
+      return;
+    }
+
     let attempts = 0;
     const maxAttempts = 5;
     
     const checkStatus = async () => {
       attempts++;
       try {
-        const result = await verifyOrderPayment(orderId, reference);
+        const result = await verifyOrderPayment(reference);
         
-        if (result.success) {
+        if (result.success && result.orderId) {
           setStatus("success");
+          setResolvedOrderId(result.orderId);
           setMessage("Payment successful! Redirecting to your order...");
           setTimeout(() => {
-            router.push(`/orders/${orderId}/success`);
+            router.push(`/orders/${result.orderId}/success`);
           }, 2000);
         } else if (attempts < maxAttempts) {
           // Keep polling
@@ -47,7 +55,7 @@ export function PaymentVerificationStatus({ orderId }: PaymentVerificationStatus
     };
 
     checkStatus();
-  }, [orderId, router, reference]);
+  }, [reference, router]);
 
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center bg-card rounded-3xl border border-border shadow-xl">
@@ -74,7 +82,7 @@ export function PaymentVerificationStatus({ orderId }: PaymentVerificationStatus
       
       {status === "error" && (
         <button
-          onClick={() => router.push(`/orders/${orderId}`)}
+          onClick={() => router.push(resolvedOrderId ? `/orders/${resolvedOrderId}` : "/orders")}
           className="mt-8 px-6 py-2 bg-primary text-primary-foreground rounded-full font-bold text-sm"
         >
           View Order
