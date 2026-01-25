@@ -47,7 +47,7 @@ export function PaymentVerificationStatus({ orderId }: PaymentVerificationStatus
     };
 
     checkStatus();
-  }, [orderId, router]);
+  }, [orderId, router, reference]);
 
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center bg-card rounded-3xl border border-border shadow-xl">

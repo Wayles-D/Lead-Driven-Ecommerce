@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     // Only handle successful charges for now
     if (event.event === "charge.success") {
-      const { reference, amount, paid_at, customer } = event.data;
+      const { reference, amount, paid_at } = event.data;
       const orderId = event.data.metadata?.orderId || reference;
 
       console.log(`✅ Webhook: Payment success for Order ${orderId}`);

@@ -57,7 +57,7 @@ export function SearchInput({ className, isTransparent }: { className?: string; 
     if (q !== query && !isFocused) {
       setQuery(q);
     }
-  }, [searchParams]); // query removed from deps to prevent feedback loop
+  }, [searchParams, isFocused, query]);
 
   const handleClear = () => {
     setQuery("");
