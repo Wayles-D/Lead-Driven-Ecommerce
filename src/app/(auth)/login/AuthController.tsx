@@ -10,9 +10,13 @@ import { motion, AnimatePresence } from "framer-motion";
  * Client Component for the Auth Controller
  * Handles dynamic form switching based on query parameters.
  */
-export function AuthController() {
+interface AuthControllerProps {
+  defaultMode?: "signin" | "signup" | "forgot";
+}
+
+export function AuthController({ defaultMode = "signin" }: AuthControllerProps) {
   const searchParams = useSearchParams();
-  const mode = searchParams.get("mode") || "signin";
+  const mode = searchParams.get("mode") || defaultMode;
 
   return (
     <div className="w-full flex justify-center items-center py-10">
