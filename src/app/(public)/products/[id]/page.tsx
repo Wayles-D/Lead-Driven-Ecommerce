@@ -16,9 +16,33 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     return { title: "Product Not Found" };
   }
 
+  const title = `${product.name} | OML Soles`;
+  const description = product.description.slice(0, 160);
+  const imageUrl = product.images[0] || "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1765226721/Brown_and_Beige_Modern_Aesthetic_Fashion_Store_Design_Logo_2_ladbpd.png";
+
   return {
-    title: `${product.name} | Lead-Driven Ecommerce`,
-    description: product.description,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url: `https://omlsoles.ng/products/${product.id}`,
+      images: [
+        {
+          url: imageUrl,
+          width: 800,
+          height: 600,
+          alt: product.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
   };
 }
 

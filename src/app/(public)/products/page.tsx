@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import { getCachedProducts, getCachedCategories } from "@/lib/cache";
 
 export const metadata: Metadata = {
-  title: "Shop Collection | Lead-Driven Ecommerce",
-  description: "Browse our premium collection of footwear.",
+  title: "Shop Collection | OML Soles",
+  description: "Browse our premium collection of handcrafted footwear. Find the perfect fit for your feet.",
 };
 
 interface ProductsPageProps {
