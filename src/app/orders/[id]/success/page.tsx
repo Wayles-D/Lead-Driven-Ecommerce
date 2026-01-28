@@ -43,11 +43,11 @@ export default async function OrderSuccessPage({ params }: SuccessPageProps) {
           </div>
           <div className="space-y-1">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-              {isPaid ? "Order Confirmed!" : "Order Received"}
+              {isPaid ? "One Last Step to Start Crafting Your Shoes" : "Order Received"}
             </h1>
             <p className="text-white/80 font-medium">
               {isPaid 
-                ? "Your handcrafted items are now being prepared for you." 
+                ? "Your payment was successful." 
                 : "Your order is in our system, but the payment is still pending."
               }
             </p>
@@ -55,6 +55,17 @@ export default async function OrderSuccessPage({ params }: SuccessPageProps) {
         </div>
 
         <div className="p-4 sm:p-8 md:p-12 space-y-12">
+          {isPaid && (
+            <div className="bg-primary/5 border border-primary/10 p-6 rounded-3xl space-y-4 animate-in fade-in slide-in-from-top-4 duration-700">
+                <p className="text-sm md:text-base text-foreground/80 leading-relaxed font-medium">
+                  To begin crafting your custom footwear, our team must receive your order details directly on WhatsApp. This ensures faster processing and prevents delays.
+                </p>
+                <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
+                  <Clock size={14} />
+                  Orders are processed only after WhatsApp confirmation.
+                </div>
+            </div>
+          )}
           {/* Order Snapshot */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="space-y-1">
@@ -126,8 +137,8 @@ export default async function OrderSuccessPage({ params }: SuccessPageProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <MessageCircle className="w-5 h-5" />
-                    Confirm on WhatsApp
+                    <Package className="w-5 h-5" />
+                    Send Order to WhatsApp
                 </a>
               </Button>
             ) : (

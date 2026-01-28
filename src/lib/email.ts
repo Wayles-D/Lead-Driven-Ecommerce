@@ -1,5 +1,6 @@
 import * as SibApiV3Sdk from "@getbrevo/brevo";
 import { formatCurrency } from "./utils";
+import { ApiService } from "./api";
 
 // Brevo Configuration
 const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
@@ -103,8 +104,11 @@ export const EmailService = {
   sendOrderConfirmation: async (to: string, orderId: string, total: number) => {
     const shortId = orderId.slice(0, 8);
     const subject = `Order Confirmed - #${shortId}`;
+    const whatsappLink = ApiService.whatsapp.getLink(ApiService.whatsapp.getOrderConfirmationMessage("Customer", orderId));
+    
     const content = `
-      <p>Your order <strong>#${shortId}</strong> has been successfully received and is now being processed by our team.</p>
+      <p>Your order <strong>#${shortId}</strong> has been successfully received.</p>
+      
       <div style="background-color: #f9f9f9; padding: 25px; border-radius: 16px; margin: 25px 0;">
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr>
@@ -113,10 +117,13 @@ export const EmailService = {
           </tr>
         </table>
       </div>
-      <p>We take great pride in our fulfillment process. You will receive an update as soon as your items are ready for delivery.</p>
-      ${getButton("View Order Details", `${process.env.NEXTAUTH_URL}/orders`)}
+
+      <p style="color: #000; font-weight: 600;">To begin crafting your custom footwear, our team must receive your order details directly on WhatsApp. This ensures faster processing and prevents delays.</p>
+      
+      ${getButton("Send Order to WhatsApp", whatsappLink)}
+
       <p style="font-size: 13px; color: #666; background: #fff3e0; padding: 12px; border-radius: 8px; border: 1px solid #ffe0b2;">
-        <strong>Priority Tip:</strong> Confirm your order on WhatsApp to expedite the fulfillment process.
+        <strong>Note:</strong> Orders are processed only after WhatsApp confirmation.
       </p>
     `;
     await sendEmail(to, subject, getHtmlWrapper("Order Confirmed", content));
