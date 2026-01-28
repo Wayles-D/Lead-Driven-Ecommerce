@@ -45,8 +45,19 @@ export function Footer() {
           </div>
         </div>
         
-        <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} OML Soles. All rights reserved.
+        <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground space-y-2">
+          <p>&copy; {new Date().getFullYear()} OML Soles. All rights reserved.</p>
+          <p>
+            Designed & Developed by{" "}
+            <a 
+              href="https://wayles-portfolio.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors font-medium underline underline-offset-4"
+            >
+              WAYLES
+            </a>
+          </p>
         </div>
       </div>
     </footer>
