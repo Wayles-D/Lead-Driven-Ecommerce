@@ -10,7 +10,17 @@ import { cn } from "@/lib/utils";
  * A premium, debounced search input component for the navbar.
  * Automatically updates the URL with the search query.
  */
-export function SearchInput({ className, isTransparent }: { className?: string; isTransparent?: boolean }) {
+export function SearchInput({ 
+  className, 
+  isTransparent,
+  isExpandable,
+  onCollapse
+}: { 
+  className?: string; 
+  isTransparent?: boolean;
+  isExpandable?: boolean;
+  onCollapse?: () => void;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -18,6 +28,13 @@ export function SearchInput({ className, isTransparent }: { className?: string; 
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Focus input when it becomes expandable and visible
+  useEffect(() => {
+    if (isExpandable && inputRef.current) {
+        inputRef.current.focus();
+    }
+  }, [isExpandable]);
 
   // Stable search function
   const performSearch = useCallback((searchTerm: string) => {
@@ -72,17 +89,19 @@ export function SearchInput({ className, isTransparent }: { className?: string; 
     e.preventDefault();
     performSearch(query);
     inputRef.current?.blur();
+    if (onCollapse) onCollapse();
   };
 
   return (
     <form 
       onSubmit={handleSubmit}
-      className={cn("relative w-full max-w-[320px]", className)}
+      className={cn("relative w-full", isExpandable ? "max-w-none" : "max-w-[320px]", className)}
     >
       <motion.div
+        layoutId="search-input-container"
         animate={isFocused ? { scale: 1.01 } : { scale: 1 }}
         className={cn(
-          "flex items-center gap-2 px-4 h-10 rounded-full border transition-all duration-300",
+          "flex items-center gap-2 px-4 h-11 rounded-full border transition-all duration-300",
           isFocused 
             ? "border-primary bg-background shadow-sm ring-2 ring-primary/5" 
             : isTransparent
@@ -91,7 +110,7 @@ export function SearchInput({ className, isTransparent }: { className?: string; 
         )}
       >
         <Search 
-          size={17} 
+          size={18} 
           className={cn(
             "transition-colors duration-300", 
             isFocused ? "text-primary" : isTransparent ? "text-white/70" : "text-muted-foreground",
@@ -104,10 +123,13 @@ export function SearchInput({ className, isTransparent }: { className?: string; 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder="Search footwear..."
+          onBlur={() => {
+            setIsFocused(false);
+            if (!query && onCollapse) onCollapse();
+          }}
+          placeholder="Search products..."
           className={cn(
-            "flex-1 bg-transparent border-none outline-none text-[13px] font-medium transition-colors",
+            "flex-1 bg-transparent border-none outline-none text-[14px] font-medium transition-colors h-full",
             isTransparent && !isFocused ? "text-white placeholder:text-white/50" : "text-foreground placeholder:text-muted-foreground/50"
           )}
         />
@@ -131,3 +153,4 @@ export function SearchInput({ className, isTransparent }: { className?: string; 
     </form>
   );
 }
+

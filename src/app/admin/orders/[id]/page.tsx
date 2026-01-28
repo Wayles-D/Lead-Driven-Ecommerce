@@ -14,7 +14,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { updateFulfillmentStatus } from "@/actions/orders";
+import { FulfillmentUpdater } from "@/components/admin/FulfillmentUpdater";
+import { CopyReferenceButton } from "@/components/admin/CopyReferenceButton";
 
 interface AdminOrderDetailPageProps {
     params: { id: string };
@@ -52,26 +53,7 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                     <p className="text-muted-foreground">Detailed overview and fulfillment management.</p>
                 </div>
 
-                <div className="flex flex-col items-end gap-2">
-                    <span className="text-[10px] uppercase tracking-widest font-black text-muted-foreground">Fulfillment Cycle</span>
-                    <form action={async (formData: FormData) => {
-                        "use server";
-                        const status = formData.get("status") as string;
-                        await updateFulfillmentStatus(order.id, status);
-                    }} className="flex gap-2">
-                        <select 
-                            name="status" 
-                            defaultValue={order.fulfillmentStatus}
-                            className="bg-card border border-border rounded-xl px-4 py-2 text-sm font-bold focus:ring-2 focus:ring-primary focus:outline-none appearance-none cursor-pointer"
-                        >
-                            <option value="PROCESSING">Processing</option>
-                            <option value="SHIPPING">Shipping</option>
-                            <option value="SHIPPED">Shipped</option>
-                            <option value="DELIVERED">Delivered</option>
-                        </select>
-                        <Button type="submit" className="rounded-xl font-bold">Update</Button>
-                    </form>
-                </div>
+                <FulfillmentUpdater orderId={order.id} initialStatus={order.fulfillmentStatus} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -160,17 +142,22 @@ export default async function AdminOrderDetailPage({ params }: AdminOrderDetailP
                             </div>
                             
                             {order.payment && (
-                                <div className="space-y-2 text-xs">
+                                <div className="space-y-3 text-xs">
                                      <div className="flex justify-between">
-                                        <span className="text-muted-foreground font-bold">Provider</span>
+                                        <span className="text-muted-foreground font-bold text-[10px] uppercase tracking-wider">Provider</span>
                                         <span className="font-mono">{order.payment.provider}</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-muted-foreground font-bold">Reference</span>
-                                        <span className="font-mono">{order.payment.reference}</span>
+                                    <div className="space-y-1 py-1">
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-muted-foreground font-bold text-[10px] uppercase tracking-wider">Reference</span>
+                                            <CopyReferenceButton reference={order.payment.reference} />
+                                        </div>
+                                        <p className="font-mono break-all text-muted-foreground bg-secondary/30 p-2 rounded-lg border border-border/50">
+                                            {order.payment.reference}
+                                        </p>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground font-bold">Paid At</span>
+                                        <span className="text-muted-foreground font-bold text-[10px] uppercase tracking-wider">Paid At</span>
                                         <span className="font-mono">
                                             {order.payment.paidAt ? format(order.payment.paidAt, "MMM d, HH:mm") : 'N/A'}
                                         </span>

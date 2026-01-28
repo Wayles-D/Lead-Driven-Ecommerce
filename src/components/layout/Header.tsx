@@ -18,7 +18,8 @@ import {
   LogOut,
   UserPlus,
   Menu,
-  X
+  X,
+  Search
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { LogoutModal } from "@/components/auth/LogoutModal";
@@ -36,6 +37,7 @@ export function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -54,10 +56,11 @@ export function Header() {
   useEffect(() => {
     setDropdownOpen(false);
     setMobileMenuOpen(false);
+    setSearchExpanded(false);
   }, [pathname]);
 
   const isHome = pathname === "/";
-  const isTransparent = isHome && !isScrolled && !mobileMenuOpen;
+  const isTransparent = isHome && !isScrolled && !mobileMenuOpen && !searchExpanded;
 
   // Handle scroll for transparent navbar
   useEffect(() => {
@@ -68,15 +71,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Set body class for homepage layout
-  useEffect(() => {
-    if (isHome) {
-      document.body.classList.add("is-home");
-    } else {
-      document.body.classList.remove("is-home");
-    }
-  }, [isHome]);
-
   return (
     <header 
       className={cn(
@@ -86,8 +80,12 @@ export function Header() {
           : "bg-background border-b border-border shadow-sm backdrop-blur-md"
       )}
     >
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+        {/* Left Section: Logo & Mobile Toggle */}
+        <div className={cn(
+            "flex items-center gap-4 transition-all duration-300",
+            searchExpanded ? "opacity-0 invisible w-0" : "opacity-100 visible"
+        )}>
           {/* Mobile Menu Toggle */}
           <button 
             className={cn(
@@ -123,48 +121,92 @@ export function Header() {
           </Link>
         </div>
 
-        {/* Desktop Search */}
-        <div className="hidden md:flex items-center flex-1 max-w-[320px] mx-8">
-          <Suspense fallback={<div className="w-full h-10 bg-secondary/10 rounded-full animate-pulse" />}>
-            <SearchInput isTransparent={isTransparent} />
-          </Suspense>
+        {/* Center Section: Search or Navigation */}
+        <div className="flex-1 flex justify-center items-center relative h-full">
+            {/* Expanded Search for Tablet/Mobile */}
+            <AnimatePresence>
+                {searchExpanded && (
+                    <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        className="absolute inset-x-0 w-full z-10"
+                    >
+                        <Suspense fallback={<div className="w-full h-10 bg-secondary/10 rounded-full animate-pulse" />}>
+                            <SearchInput 
+                                isExpandable 
+                                onCollapse={() => setSearchExpanded(false)}
+                                isTransparent={isTransparent}
+                            />
+                        </Suspense>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Desktop Search (Large Screens only) */}
+            <div className={cn(
+                "hidden xl:flex items-center w-full max-w-[320px] transition-all",
+                searchExpanded && "opacity-0"
+            )}>
+                <Suspense fallback={<div className="w-full h-10 bg-secondary/10 rounded-full animate-pulse" />}>
+                    <SearchInput isTransparent={isTransparent} />
+                </Suspense>
+            </div>
+
+            {/* Tablet/Desktop Navigation */}
+            <nav className={cn(
+                "hidden md:flex gap-8 items-center h-full transition-all duration-300",
+                searchExpanded ? "opacity-0 invisible" : "opacity-100 visible"
+            )}>
+              {navItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "text-sm font-bold transition-colors h-full flex items-center relative",
+                      isActive 
+                        ? "text-primary" 
+                        : isTransparent ? "text-white/80 hover:text-white" : "text-muted-foreground hover:text-primary"
+                    )}
+                  >
+                    {item.name}
+                    {isActive && (
+                      <motion.div
+                        layoutId="navbar-indicator"
+                        className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
+                        initial={false}
+                        transition={{
+                          type: "spring",
+                          stiffness: 500,
+                          damping: 30,
+                        }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-8 items-center h-full">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "text-sm font-bold transition-colors h-full flex items-center relative",
-                  isActive 
-                    ? "text-primary" 
-                    : isTransparent ? "text-white/80 hover:text-white" : "text-muted-foreground hover:text-primary"
-                )}
-              >
-                {item.name}
-                {isActive && (
-                  <motion.div
-                    layoutId="navbar-indicator"
-                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary"
-                    initial={false}
-                    transition={{
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 30,
-                    }}
-                  />
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
         {/* Right Actions */}
-        <div className="flex items-center gap-2 md:gap-4">
+        <div className={cn(
+            "flex items-center gap-2 md:gap-4 transition-all",
+            searchExpanded && "opacity-0 invisible w-0"
+        )}>
+          {/* Search Toggle (Desktop below XL, Tablet, Mobile) */}
+          <button
+            onClick={() => setSearchExpanded(true)}
+            className={cn(
+              "xl:hidden w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300",
+              isTransparent ? "bg-white/10 text-white hover:bg-white/20" : "bg-secondary hover:bg-secondary/80 text-foreground"
+            )}
+            title="Search"
+          >
+            <Search size={20} />
+          </button>
+
           <Link
             href="/cart"
             className={cn(
@@ -201,20 +243,21 @@ export function Header() {
                 <User size={18} />
               </div>
               <span className={cn(
-                "hidden md:inline text-sm font-bold transition-colors duration-300",
+                "hidden sm:inline text-sm font-bold transition-colors duration-300",
                 isTransparent ? "text-white" : "text-foreground"
               )}>
-                {session?.user?.name || "Guest"}
+                {session?.user?.name?.split(" ")[0] || "Guest"}
               </span>
               <ChevronDown 
                 size={14} 
                 className={cn(
-                  "hidden md:block transition-all duration-200", 
+                  "hidden sm:block transition-all duration-200", 
                   isTransparent ? "text-white/70" : "text-muted-foreground",
                   dropdownOpen && "rotate-180"
                 )} 
               />
             </button>
+
 
             <AnimatePresence>
               {dropdownOpen && (
@@ -287,9 +330,6 @@ export function Header() {
             className="md:hidden border-t bg-background overflow-hidden"
           >
             <nav className="flex flex-col p-4 gap-4">
-              <Suspense fallback={<div className="w-full h-10 bg-secondary/10 rounded-full animate-pulse" />}>
-                <SearchInput className="max-w-none" />
-              </Suspense>
               <div className="flex flex-col gap-2">
               {navItems.map((item) => (
                 <Link

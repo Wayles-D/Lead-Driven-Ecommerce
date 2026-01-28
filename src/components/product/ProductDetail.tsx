@@ -8,7 +8,13 @@ import  {FaWhatsapp} from "react-icons/fa";
 import { ApiService } from "@/lib/api";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ArrowLeft,
+  ArrowRight,
+  ShieldCheck,
+  Package,
+  Star
+} from "lucide-react";
 
 
 interface Product {
@@ -22,6 +28,7 @@ interface Product {
 }
 
 export function ProductDetail({ product }: { product: Product }) {
+    const router = useRouter();
     const { data: session } = useSession();
     const { addItem } = useCart();
     const [selectedSize, setSelectedSize] = useState<number | null>(null);
@@ -99,6 +106,14 @@ export function ProductDetail({ product }: { product: Product }) {
 
             {/* Product Info */}
             <div className="flex flex-col gap-8">
+                <button 
+                    onClick={() => router.back()}
+                    className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors group w-fit"
+                >
+                    <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                    Back to Products
+                </button>
+
                 <div>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 leading-tight">{product.name}</h1>
                     <div className="flex items-baseline gap-3">
