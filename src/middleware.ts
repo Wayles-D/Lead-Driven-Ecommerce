@@ -21,6 +21,11 @@ const authRoutes = ["/login", "/signup", "/reset-password"];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Allow Paystack Webhook
+  if (pathname === "/api/webhooks/paystack") {
+    return NextResponse.next();
+  }
+
   // Allow NextAuth API routes
   if (pathname.startsWith("/api/auth")) {
     return NextResponse.next();
