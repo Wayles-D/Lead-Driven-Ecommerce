@@ -10,11 +10,10 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { 
   ArrowLeft,
-  ArrowRight,
-  ShieldCheck,
-  Package,
-  Star
+  Package 
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 
 interface Product {

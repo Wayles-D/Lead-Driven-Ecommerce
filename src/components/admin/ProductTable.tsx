@@ -5,11 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { 
     Package, 
-    Plus, 
     Edit, 
     Search, 
     X, 
-    Filter, 
     ChevronDown 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

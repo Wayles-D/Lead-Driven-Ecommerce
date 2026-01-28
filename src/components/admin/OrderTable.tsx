@@ -30,7 +30,7 @@ interface OrderRow {
     };
 }
 
-export function OrderTable({ initialOrders }: { initialOrders: any[] }) {
+export function OrderTable({ initialOrders }: { initialOrders: OrderRow[] }) {
     const [searchQuery, setSearchQuery] = useState("");
 
     const filteredOrders = initialOrders.filter((order) => {
