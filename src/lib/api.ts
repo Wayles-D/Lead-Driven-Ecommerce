@@ -9,8 +9,10 @@ import crypto from "crypto";
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "234";
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY!;
-const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dur7drupx";
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "OMLPRODUCTIMAGES";
+const CLOUDINARY_CLOUD_NAME =
+  process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dur7drupx";
+const CLOUDINARY_UPLOAD_PRESET =
+  process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "OMLPRODUCTIMAGES";
 
 // Check for required keys in server environment
 const checkPaystackKey = () => {
@@ -67,16 +69,26 @@ export const ApiService = {
     /**
      * Message: Product Inquiry
      */
-    getProductInquiryMessage: (userName: string, productName: string, productId: string) => {
-      return `Hello! I'm ${userName}. I'm interested in the ${productName} (ID: ${productId.slice(0, 6)}). Could you provide more details about it?`;
+    getProductInquiryMessage: (
+      userName: string,
+      productName: string,
+      productId: string
+    ) => {
+      return `Hello! I'm ${userName}. I'm interested in the ${productName} (ID: ${productId.slice(
+        0,
+        6
+      )}). Could you provide more details about it?`;
     },
 
     /**
      * Message: Order Confirmation (Post-Payment)
      */
     getOrderConfirmationMessage: (userName: string, orderId: string) => {
-      return `Hi! My name is ${userName} and I just completed payment for Order #${orderId.slice(0, 8)}. I'd like to confirm it to prioritize fulfillment. Thanks!`;
-    }
+      return `Hi! My name is ${userName} and I just completed payment for Order #${orderId.slice(
+        0,
+        8
+      )}. I'd like to confirm it to prioritize fulfillment. Thanks!`;
+    },
   },
 
   /**
@@ -93,7 +105,11 @@ export const ApiService = {
     /**
      * Initialize a Paystack transaction
      */
-    initializePayment: async (email: string, amount: number, orderId: string) => {
+    initializePayment: async (
+      email: string,
+      amount: number,
+      orderId: string
+    ) => {
       checkPaystackKey();
       const callbackUrl =
         process.env.PAYSTACK_CALLBACK_URL ||
@@ -118,17 +134,22 @@ export const ApiService = {
         },
       };
 
-      const response = await fetch("https://api.paystack.co/transaction/initialize", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      });
+      const response = await fetch(
+        "https://api.paystack.co/transaction/initialize",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(params),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error(`Paystack initialization failed: ${response.statusText}`);
+        throw new Error(
+          `Paystack initialization failed: ${response.statusText}`
+        );
       }
 
       return (await response.json()) as InitializePaymentResponse;
@@ -139,12 +160,15 @@ export const ApiService = {
      */
     verifyTransaction: async (reference: string) => {
       checkPaystackKey();
-      const response = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
-        },
-      });
+      const response = await fetch(
+        `https://api.paystack.co/transaction/verify/${reference}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Paystack verification failed: ${response.statusText}`);
@@ -158,18 +182,17 @@ export const ApiService = {
      * Payload must be the raw string body of the request.
      */
     verifyWebhookSignature: (signature: string, payload: string) => {
-      const webhookSecret = process.env.PAYSTACK_WEBHOOK_SECRET;
-      if (!webhookSecret) {
-        throw new Error("PAYSTACK_WEBHOOK_SECRET is not defined");
+      if (!PAYSTACK_SECRET_KEY) {
+        throw new Error("PAYSTACK_SECRET_KEY is not defined");
       }
-      
+
       const hash = crypto
-        .createHmac("sha512", webhookSecret)
+        .createHmac("sha512", PAYSTACK_SECRET_KEY)
         .update(payload)
         .digest("hex");
-      
+
       return hash === signature;
-    }
+    },
   },
 
   /**
@@ -198,7 +221,7 @@ export const ApiService = {
       }
 
       return (await response.json()) as CloudinaryUploadResponse;
-    }
+    },
   },
 
   /**
@@ -209,23 +232,29 @@ export const ApiService = {
       {
         url: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1753045322/Oml_hero_img_qfjpdy.avif",
         headline: "Handcrafted Luxury",
-        subtext: "Experience the intentional comfort of footwear built to last and designed for you."
+        subtext:
+          "Experience the intentional comfort of footwear built to last and designed for you.",
       },
       {
         url: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769154694/03db9648-f716-4942-8018-c938e041cf59.png",
         headline: "Made Just for You",
-        subtext: "Every pair is meticulously handcrafted on demand with the finest premium materials."
+        subtext:
+          "Every pair is meticulously handcrafted on demand with the finest premium materials.",
       },
       {
         url: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769154779/6701851f-c066-4e7d-b3ca-c1230781c5ac.png",
         headline: "Quiet Luxury",
-        subtext: "Craftsmanship that speaks for itself. Discover the soft feel your feet needs."
-      }
+        subtext:
+          "Craftsmanship that speaks for itself. Discover the soft feel your feet needs.",
+      },
     ],
     placeholders: {
-      sandals: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769153116/d05f8553-346a-4c7b-8157-8feb797f7ae2.png",
-      slides: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769152753/dc0f9f9e-7209-400d-b38e-3b36049da2fe.png",
-      slippers: "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1764972050/9176554c-fe50-4561-8e55-842be195866e.png",
-    }
-  }
+      sandals:
+        "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769153116/d05f8553-346a-4c7b-8157-8feb797f7ae2.png",
+      slides:
+        "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1769152753/dc0f9f9e-7209-400d-b38e-3b36049da2fe.png",
+      slippers:
+        "https://res.cloudinary.com/dmb5ggmvg/image/upload/v1764972050/9176554c-fe50-4561-8e55-842be195866e.png",
+    },
+  },
 };
