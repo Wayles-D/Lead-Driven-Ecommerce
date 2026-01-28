@@ -28,6 +28,7 @@ export async function getAdminUsers() {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        phone: user.phoneNumber,
         role: user.role,
         createdAt: user.createdAt,
         totalOrders: user._count.orders,

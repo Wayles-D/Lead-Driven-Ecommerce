@@ -8,6 +8,9 @@ import { X, Plus, Loader2 } from "lucide-react";
 import { ApiService } from "@/lib/api";
 
 
+import { Toast } from "@/components/ui/Toast";
+import { useRouter } from "next/navigation";
+
 // Define strict type based on Prisma model
 interface ProductData {
   id?: string;
@@ -21,10 +24,12 @@ interface ProductData {
 }
 
 export function ProductForm({ product }: { product?: ProductData }) {
+    const router = useRouter();
     const isEditing = !!product;
     const [isLoading, setIsLoading] = useState(false);
     const [images, setImages] = useState<string[]>(product?.images || []);
     const [isUploading, setIsUploading] = useState(false);
+    const [toast, setToast] = useState<{ isVisible: boolean; message: string }>({ isVisible: false, message: "" });
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Initial values
@@ -72,15 +77,30 @@ export function ProductForm({ product }: { product?: ProductData }) {
     };
 
     return (
+        <>
+        <Toast 
+            message={toast.message} 
+            isVisible={toast.isVisible} 
+            onClose={() => setToast(prev => ({ ...prev, isVisible: false }))} 
+        />
+        
         <form 
             action={async (formData) => {
                 setIsLoading(true);
                 try {
                     if (isEditing && product?.id) {
                          await updateProduct(product.id, formData);
+                         setToast({ isVisible: true, message: "Product updated successfully" });
                     } else {
                          await createProduct(formData);
+                         setToast({ isVisible: true, message: "Product created successfully" });
                     }
+                    setTimeout(() => {
+                        router.push("/admin");
+                    }, 1000);
+                } catch (error) {
+                    console.error("Form error:", error);
+                    alert("An error occurred while saving the product.");
                 } finally {
                     setIsLoading(false);
                 }
@@ -226,5 +246,6 @@ export function ProductForm({ product }: { product?: ProductData }) {
                  </Button>
             </div>
         </form>
+        </>
     );
 }

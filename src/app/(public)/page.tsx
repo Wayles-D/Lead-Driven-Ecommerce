@@ -186,12 +186,12 @@ function HeroSlider() {
           </div>
 
           {/* Content */}
-          <div className="relative h-full container mx-auto px-4 pt-16 flex flex-col items-center justify-center text-center text-white z-10">
+          <div className="relative h-full container mx-auto px-4 pt-16 flex flex-col items-center justify-center text-center text-white z-30 pointer-events-none">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 1 }}
-              className="max-w-4xl space-y-6 md:space-y-8"
+              className="max-w-4xl space-y-6 md:space-y-8 pointer-events-auto"
             >
               <div className="space-y-2 md:space-y-4">
                 <span className="text-[10px] md:text-sm font-bold tracking-[0.4em] uppercase text-white/70">
