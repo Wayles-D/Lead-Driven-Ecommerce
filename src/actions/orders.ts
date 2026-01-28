@@ -91,10 +91,7 @@ export async function createOrder(formData: FormData, cartItemsJson: string) {
     });
   });
 
-  // Order Confirmation Email (Non-blocking)
-  if (session.user.email) {
-    EmailService.sendOrderConfirmation(session.user.email, order.id, totalAmount);
-  }
+
 
   return { success: true, orderId: order.id };
 }
