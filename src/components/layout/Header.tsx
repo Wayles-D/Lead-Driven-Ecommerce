@@ -71,6 +71,15 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Restore body class for homepage layout (Transparency fix)
+  useEffect(() => {
+    if (isHome) {
+      document.body.classList.add("is-home");
+    } else {
+      document.body.classList.remove("is-home");
+    }
+  }, [isHome]);
+
   return (
     <header 
       className={cn(
@@ -80,11 +89,11 @@ export function Header() {
           : "bg-background border-b border-border shadow-sm backdrop-blur-md"
       )}
     >
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-6 md:gap-12">
         {/* Left Section: Logo & Mobile Toggle */}
         <div className={cn(
-            "flex items-center gap-4 transition-all duration-300",
-            searchExpanded ? "opacity-0 invisible w-0" : "opacity-100 visible"
+            "flex items-center gap-4 transition-all duration-300 shrink-0",
+            searchExpanded ? "opacity-0 invisible w-0 overflow-hidden" : "opacity-100 visible"
         )}>
           {/* Mobile Menu Toggle */}
           <button 
@@ -123,7 +132,7 @@ export function Header() {
 
         {/* Center Section: Search or Navigation */}
         <div className="flex-1 flex justify-center items-center relative h-full">
-            {/* Expanded Search for Tablet/Mobile */}
+            {/* Expanded Search for All Screen Sizes */}
             <AnimatePresence>
                 {searchExpanded && (
                     <motion.div 
@@ -132,7 +141,7 @@ export function Header() {
                         exit={{ opacity: 0, x: 20 }}
                         className="absolute inset-x-0 w-full z-10"
                     >
-                        <Suspense fallback={<div className="w-full h-10 bg-secondary/10 rounded-full animate-pulse" />}>
+                        <Suspense fallback={<div className="w-full h-11 bg-secondary/10 rounded-full animate-pulse" />}>
                             <SearchInput 
                                 isExpandable 
                                 onCollapse={() => setSearchExpanded(false)}
@@ -143,19 +152,9 @@ export function Header() {
                 )}
             </AnimatePresence>
 
-            {/* Desktop Search (Large Screens only) */}
-            <div className={cn(
-                "hidden xl:flex items-center w-full max-w-[320px] transition-all",
-                searchExpanded && "opacity-0"
-            )}>
-                <Suspense fallback={<div className="w-full h-10 bg-secondary/10 rounded-full animate-pulse" />}>
-                    <SearchInput isTransparent={isTransparent} />
-                </Suspense>
-            </div>
-
-            {/* Tablet/Desktop Navigation */}
+            {/* Navigation (Tablet/Desktop) */}
             <nav className={cn(
-                "hidden md:flex gap-8 items-center h-full transition-all duration-300",
+                "hidden md:flex gap-10 items-center h-full transition-all duration-300",
                 searchExpanded ? "opacity-0 invisible" : "opacity-100 visible"
             )}>
               {navItems.map((item) => {
@@ -165,7 +164,7 @@ export function Header() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "text-sm font-bold transition-colors h-full flex items-center relative",
+                      "text-sm font-bold transition-colors h-full flex items-center relative tracking-wide",
                       isActive 
                         ? "text-primary" 
                         : isTransparent ? "text-white/80 hover:text-white" : "text-muted-foreground hover:text-primary"
@@ -192,14 +191,14 @@ export function Header() {
 
         {/* Right Actions */}
         <div className={cn(
-            "flex items-center gap-2 md:gap-4 transition-all",
-            searchExpanded && "opacity-0 invisible w-0"
+            "flex items-center gap-3 md:gap-6 transition-all shrink-0",
+            searchExpanded && "opacity-0 invisible w-0 overflow-hidden"
         )}>
-          {/* Search Toggle (Desktop below XL, Tablet, Mobile) */}
+          {/* Universal Search Toggle */}
           <button
             onClick={() => setSearchExpanded(true)}
             className={cn(
-              "xl:hidden w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300",
+              "w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300",
               isTransparent ? "bg-white/10 text-white hover:bg-white/20" : "bg-secondary hover:bg-secondary/80 text-foreground"
             )}
             title="Search"
@@ -230,7 +229,7 @@ export function Header() {
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className={cn(
-                "flex items-center gap-1 md:gap-2 p-1 md:pl-1 md:pr-2 rounded-full transition-all duration-300 group",
+                "flex items-center gap-2 p-1 md:pl-1 md:pr-3 rounded-full transition-all duration-300 group",
                 isTransparent ? "hover:bg-white/10" : "hover:bg-secondary"
               )}
             >
