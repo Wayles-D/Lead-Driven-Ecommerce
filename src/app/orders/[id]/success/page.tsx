@@ -1,7 +1,7 @@
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { CheckCircle2, Clock, MessageCircle, ArrowRight, Package, Calendar, MapPin, ReceiptText } from "lucide-react";
+import { CheckCircle2, Clock, ArrowRight, Package, Calendar, MapPin, ReceiptText } from "lucide-react";
 import { format } from "date-fns";
 import { initiateCheckoutPayment } from "@/actions/payment";
 import { prisma } from "@/lib/prisma";
